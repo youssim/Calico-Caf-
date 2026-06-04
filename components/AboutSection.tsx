@@ -127,9 +127,9 @@ export default function AboutSection() {
       style={{ height: "500vh", background: "#f5f0e8" }}
     >
       {/* eslint-disable @next/next/no-img-element */}
-      <img ref={cup2Ref} src="/gobelet2.png" alt="Iced Latte"   style={cupStyle} />
-      <img ref={cup3Ref} src="/gobelet3.png" alt="Matcha"        style={cupStyle} />
-      <img ref={cup1Ref} src="/goblet1.png"  alt="Black Coffee"  style={{ ...cupStyle, zIndex: 11 }} />
+      <img ref={cup2Ref} src="/gobelet2.png?v=2" alt="Iced Latte"   style={cupStyle} />
+      <img ref={cup3Ref} src="/gobelet3.png?v=2" alt="Matcha"        style={cupStyle} />
+      <img ref={cup1Ref} src="/goblet1.png?v=2"  alt="Black Coffee"  style={{ ...cupStyle, zIndex: 11 }} />
       {/* eslint-enable @next/next/no-img-element */}
 
       <span ref={cup2LabelRef} style={labelStyle}>Iced Latte</span>
