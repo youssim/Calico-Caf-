@@ -119,8 +119,8 @@ export default function HeroSection() {
         top: -57,
         left: 0,
         right: 0,
-        maskImage: "linear-gradient(to bottom, black 70%, transparent 95%), linear-gradient(to left, black 35%, transparent 65%)",
-        WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 95%), linear-gradient(to left, black 35%, transparent 65%)",
+        maskImage: "linear-gradient(to bottom, black 70%, transparent 95%), linear-gradient(to left, black 50%, transparent 56%)",
+        WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 95%), linear-gradient(to left, black 50%, transparent 56%)",
         maskComposite: "add",
         WebkitMaskComposite: "source-over",
       }}>
