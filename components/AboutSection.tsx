@@ -6,8 +6,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// 320 * 1.7 ≈ 544px
-const H = 544;
+// 544 * 1.4 ≈ 762px
+const H = 762;
 
 export default function AboutSection() {
   const sectionRef    = useRef<HTMLDivElement>(null);
@@ -24,12 +24,14 @@ export default function AboutSection() {
       .forEach(r => r.current && gsap.killTweensOf(r.current));
 
     const ctx = gsap.context(() => {
-      /* ── Initial states ── */
-      gsap.set(cup1Ref.current,      { opacity: 0, y: 160, scale: 0.5, rotation: 0 });
+      /* ── Initial states ──
+         cup1 est DÉJÀ visible (pas d'animation d'entrée) — il prolonge
+         le gobelet aperçu sur la Hero. Il démarre haut et "tombe". */
+      gsap.set(cup1Ref.current,      { opacity: 1, y: -200, scale: 1, rotation: 0 });
       gsap.set(cup1LabelRef.current, { opacity: 0 });
-      gsap.set(cup2Ref.current,      { opacity: 0, x: -330, y: 80 });
+      gsap.set(cup2Ref.current,      { opacity: 0, x: -460, y: 80 });
       gsap.set(cup2LabelRef.current, { opacity: 0 });
-      gsap.set(cup3Ref.current,      { opacity: 0, x: 330,  y: 80 });
+      gsap.set(cup3Ref.current,      { opacity: 0, x: 460,  y: 80 });
       gsap.set(cup3LabelRef.current, { opacity: 0 });
       gsap.set(taglineRef.current,   { opacity: 0, y: 14 });
 
@@ -42,19 +44,14 @@ export default function AboutSection() {
         },
       });
 
-      /* ── Phase 1 — cup1 enters (0 → 12%) ──────────────────── */
-      tl.to(cup1Ref.current,
-        { y: 0, opacity: 1, scale: 1, ease: "power3.out", duration: 0.12 }, 0);
-
-      /* ── Scroll-driven rotation: 1 full turn over 0 → 78%
-             ease: "none" so rotation is linear with scroll
-             Lands at 360deg = 0deg mod 360 = perfectly upright ── */
+      /* ── Chute scroll-driven : le gobelet descend en tournant.
+             rotation 0 → 360 (1 tour complet) et y -200 → 0 sur 0 → 78%.
+             ease "none" = linéaire avec le scroll, atterrit droit (360°=0°)
+             et centré entre les deux autres gobelets. ── */
       tl.to(cup1Ref.current,
         { rotation: 360, ease: "none", duration: 0.78 }, 0);
-
-      /* ── Phase 3 — cup descends slightly (65% → 80%) ──────── */
       tl.to(cup1Ref.current,
-        { y: 100, ease: "power1.inOut", duration: 0.15 }, 0.65);
+        { y: 0, ease: "none", duration: 0.78 }, 0);
 
       /* ── Phase 4 — trio rises (75% → 100%) ────────────────── */
       tl.to(cup2Ref.current,
@@ -144,7 +141,7 @@ export default function AboutSection() {
         <span ref={cup2LabelRef} style={{
           ...labelStyle,
           top: `calc(50% + ${H / 2 + 10}px)`,
-          transform: "translateX(-330px)",
+          transform: "translateX(-460px)",
           opacity: 0,
         }}>
           Iced Latte
@@ -168,7 +165,7 @@ export default function AboutSection() {
         <span ref={cup3LabelRef} style={{
           ...labelStyle,
           top: `calc(50% + ${H / 2 + 10}px)`,
-          transform: "translateX(330px)",
+          transform: "translateX(460px)",
           opacity: 0,
         }}>
           Matcha

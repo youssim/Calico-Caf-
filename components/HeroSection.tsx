@@ -40,12 +40,12 @@ export default function HeroSection() {
           display: "flex",
           alignItems: "center",
           gap: "2rem",
-          padding: "8px 36px",
+          padding: "2px 36px",
           borderRadius: 50,
           background: "rgba(245,240,232,0.85)",
           backdropFilter: "blur(12px)",
           WebkitBackdropFilter: "blur(12px)",
-          border: "2px solid rgba(139,115,85,0.6)",
+          border: "2px solid #1a1a1a",
           whiteSpace: "nowrap",
         }}
       >
@@ -54,7 +54,7 @@ export default function HeroSection() {
         <img
           src="/calico-logo.png"
           alt="Calico"
-          style={{ height: 58, width: "auto", display: "block" }}
+          style={{ height: 67, width: "auto", display: "block" }}
         />
 
         {/* Links */}
@@ -135,6 +135,26 @@ export default function HeroSection() {
           }}
         />
       </div>
+
+      {/* GOBELET — déjà présent, dépasse du bas, derrière la tagline */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/goblet1.png"
+        alt=""
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          /* ~34vh visible en haut du gobelet, le reste sort sous le pli */
+          bottom: "calc(34vh - 762px)",
+          left: "50%",
+          transform: "translateX(-50%)",
+          height: 762,
+          width: "auto",
+          zIndex: 5,
+          mixBlendMode: "multiply",
+          pointerEvents: "none",
+        }}
+      />
 
       {/* CAFÉ DE SPÉCIALITÉ — bas droite */}
       <motion.p
