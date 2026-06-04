@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
-import { Playfair_Display, DM_Sans } from "next/font/google";
+import { Saira_Extra_Condensed, Courier_Prime } from "next/font/google";
 import "./globals.css";
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const saira = Saira_Extra_Condensed({
+  variable: "--font-saira",
+  subsets: ["latin"],
+  weight: ["900"],
+});
+
+const courier = Courier_Prime({
+  variable: "--font-courier",
   subsets: ["latin"],
   weight: ["400", "700"],
   style: ["normal", "italic"],
-});
-
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
-  subsets: ["latin"],
-  weight: ["300", "400", "500"],
 });
 
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className={`${playfair.variable} ${dmSans.variable} h-full`}>
+    <html lang="fr" className={`${saira.variable} ${courier.variable} h-full`}>
       <body className="min-h-full">{children}</body>
     </html>
   );

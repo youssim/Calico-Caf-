@@ -50,15 +50,12 @@ export default function HeroSection() {
         }}
       >
         {/* Logo */}
-        <span style={{
-          fontFamily: "var(--font-playfair)",
-          fontSize: 17,
-          fontWeight: 700,
-          color: "var(--black)",
-          letterSpacing: "-0.02em",
-        }}>
-          Calico
-        </span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/calico-logo.png"
+          alt="Calico"
+          style={{ height: 32, width: "auto", display: "block" }}
+        />
 
         {/* Links */}
         <div className="nav-links" style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
@@ -70,7 +67,7 @@ export default function HeroSection() {
                 background: "none",
                 border: "none",
                 cursor: "pointer",
-                fontFamily: "var(--font-dm-sans)",
+                fontFamily: "var(--font-courier)",
                 fontSize: 12,
                 fontWeight: 400,
                 color: "var(--black)",
@@ -95,7 +92,7 @@ export default function HeroSection() {
           style={{
             background: "var(--black)",
             color: "#f5f0e8",
-            fontFamily: "var(--font-dm-sans)",
+            fontFamily: "var(--font-courier)",
             fontSize: 12,
             fontWeight: 500,
             padding: "8px 18px",
@@ -114,6 +111,10 @@ export default function HeroSection() {
         top: -57,
         left: 0,
         right: 0,
+        maskImage: "linear-gradient(to bottom, black 70%, transparent 95%), linear-gradient(to left, black 35%, transparent 65%)",
+        WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 95%), linear-gradient(to left, black 35%, transparent 65%)",
+        maskComposite: "add",
+        WebkitMaskComposite: "source-over",
       }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -127,29 +128,52 @@ export default function HeroSection() {
         />
       </div>
 
-      {/* TAGLINE — zone libre sous l'image */}
+      {/* CAFÉ DE SPÉCIALITÉ — haut gauche */}
+      <motion.p
+        {...fadeUp(0.2)}
+        style={{
+          position: "absolute",
+          top: "5.5rem",
+          left: "2rem",
+          zIndex: 10,
+          fontFamily: "var(--font-courier)",
+          fontSize: "clamp(11px, 1vw, 14px)",
+          letterSpacing: "0.15em",
+          textTransform: "uppercase",
+          color: "var(--black)",
+          opacity: 0.6,
+        }}
+      >
+        Café de spécialité.
+      </motion.p>
+
+      {/* TAGLINE — énorme en bas pleine largeur */}
       <div
         className="hero-tagline"
         style={{
           position: "absolute",
-          bottom: "3rem",
-          left: "4rem",
+          bottom: 0,
+          left: 0,
+          right: 0,
           zIndex: 10,
+          overflow: "hidden",
+          lineHeight: 0.85,
         }}
       >
         <motion.p
           {...fadeUp(0.2)}
           style={{
-            fontFamily: "var(--font-playfair)",
-            fontSize: "clamp(40px, 6vw, 80px)",
-            fontWeight: 700,
-            lineHeight: 1.0,
+            fontFamily: "var(--font-saira)",
+            fontSize: "clamp(60px, 13vw, 180px)",
+            fontWeight: 900,
+            lineHeight: 0.85,
             color: "var(--black)",
+            whiteSpace: "nowrap",
+            paddingLeft: "1rem",
           }}
         >
           Brunch tous<br />
-          les jours.<br />
-          <em style={{ fontSize: "clamp(28px, 4vw, 56px)" }}>Café de spécialité.</em>
+          les jours.
         </motion.p>
       </div>
 
