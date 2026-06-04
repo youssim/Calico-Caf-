@@ -13,6 +13,9 @@ const H = 762;
 const PEEK_VISIBLE = 410;
 // Inclinaison du gobelet au repos sur la Hero (se redresse au scroll)
 const TILT = 15;
+// Décalage horizontal du gobelet sur la Hero (pointe à droite du texte,
+// puis glisse vers le centre en montant)
+const HERO_X = 240;
 // Décalage horizontal des gobelets latéraux dans le trio final
 const SIDE = 460;
 
@@ -35,7 +38,7 @@ export default function AboutSection() {
       const peekY = () => window.innerHeight / 2 + H / 2 - PEEK_VISIBLE;
 
       /* ── États initiaux (tout est position: fixed, centré via xPercent/yPercent) ── */
-      gsap.set(cup1Ref.current,      { xPercent: -50, yPercent: -50, y: peekY(), rotation: TILT, opacity: 1 });
+      gsap.set(cup1Ref.current,      { xPercent: -50, yPercent: -50, x: HERO_X, y: peekY(), rotation: TILT, opacity: 1 });
       gsap.set(cup1LabelRef.current, { xPercent: -50, yPercent: -50, y: H / 2 + 40, opacity: 0 });
       gsap.set(cup2Ref.current,      { xPercent: -50, yPercent: -50, x: -SIDE, y: 80, opacity: 0 });
       gsap.set(cup2LabelRef.current, { xPercent: -50, yPercent: -50, x: -SIDE, y: H / 2 + 40, opacity: 0 });
@@ -57,10 +60,10 @@ export default function AboutSection() {
         },
       });
 
-      /* p 0 → 0.20  (pendant la Hero) : le gobelet (incliné à TILT°) monte du
-         bas vers le centre en amorçant sa rotation (TILT → 187°). */
+      /* p 0 → 0.20  (pendant la Hero) : le gobelet (incliné à TILT°, décalé à
+         droite) monte vers le centre (x: HERO_X → 0) en amorçant sa rotation. */
       tl.to(cup1Ref.current,
-        { y: 0, rotation: 187, ease: "none", duration: 0.20 }, 0);
+        { x: 0, y: 0, rotation: 187, ease: "none", duration: 0.20 }, 0);
 
       /* p 0.20 → 0.60 : il termine son tour (180 → 360 = droit), reste centré. */
       tl.to(cup1Ref.current,
