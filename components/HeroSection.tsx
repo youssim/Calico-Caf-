@@ -10,9 +10,9 @@ const fadeUp = (delay: number) => ({
 
 const navLinks = [
   { label: "À propos", href: "#a-propos" },
-  { label: "Menu", href: "#menu" },
+  { label: "Au menu", href: "#menu" },
   { label: "FAQ", href: "#faq" },
-  { label: "Infos", href: "#infos" },
+  { label: "Contact", href: "#infos" },
 ];
 
 function scrollTo(id: string) {
@@ -30,7 +30,7 @@ export default function HeroSection() {
         transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
         style={{
           position: "fixed",
-          top: 16,
+          top: 18,
           left: 0,
           right: 0,
           marginLeft: "auto",
@@ -40,12 +40,12 @@ export default function HeroSection() {
           display: "flex",
           alignItems: "center",
           gap: "2rem",
-          padding: "10px 24px",
+          padding: "8px 36px",
           borderRadius: 50,
           background: "rgba(245,240,232,0.85)",
           backdropFilter: "blur(12px)",
           WebkitBackdropFilter: "blur(12px)",
-          border: "0.5px solid rgba(139,115,85,0.3)",
+          border: "2px solid rgba(139,115,85,0.6)",
           whiteSpace: "nowrap",
         }}
       >
@@ -54,7 +54,7 @@ export default function HeroSection() {
         <img
           src="/calico-logo.png"
           alt="Calico"
-          style={{ height: 32, width: "auto", display: "block" }}
+          style={{ height: 58, width: "auto", display: "block" }}
         />
 
         {/* Links */}
@@ -68,7 +68,7 @@ export default function HeroSection() {
                 border: "none",
                 cursor: "pointer",
                 fontFamily: "var(--font-courier)",
-                fontSize: 12,
+                fontSize: 19,
                 fontWeight: 400,
                 color: "var(--black)",
                 opacity: 0.7,
@@ -82,28 +82,36 @@ export default function HeroSection() {
             </button>
           ))}
         </div>
-
-        {/* CTA dans la navbar */}
-        <motion.button
-          className="nav-cta"
-          onClick={() => scrollTo("#menu")}
-          whileHover={{ scale: 1.03 }}
-          transition={{ type: "spring", stiffness: 400, damping: 20 }}
-          style={{
-            background: "var(--black)",
-            color: "#f5f0e8",
-            fontFamily: "var(--font-courier)",
-            fontSize: 12,
-            fontWeight: 500,
-            padding: "8px 18px",
-            borderRadius: 50,
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          Voir le menu
-        </motion.button>
       </motion.nav>
+
+      {/* CTA VOIR LE MENU — haut droite */}
+      <motion.button
+        className="nav-cta"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
+        onClick={() => scrollTo("#menu")}
+        whileHover={{ scale: 1.03 }}
+        style={{
+          position: "fixed",
+          top: 18,
+          right: "2rem",
+          zIndex: 100,
+          background: "var(--black)",
+          color: "#f5f0e8",
+          fontFamily: "var(--font-courier)",
+          fontSize: 13,
+          fontWeight: 700,
+          padding: "14px 28px",
+          borderRadius: 50,
+          border: "none",
+          cursor: "pointer",
+          letterSpacing: "0.05em",
+          textTransform: "uppercase",
+        }}
+      >
+        Voir le menu
+      </motion.button>
 
       {/* HERO IMAGE — taille naturelle, collée en haut */}
       <div style={{
@@ -128,13 +136,13 @@ export default function HeroSection() {
         />
       </div>
 
-      {/* CAFÉ DE SPÉCIALITÉ — haut gauche */}
+      {/* CAFÉ DE SPÉCIALITÉ — bas droite */}
       <motion.p
-        {...fadeUp(0.2)}
+        {...fadeUp(0.3)}
         style={{
           position: "absolute",
-          top: "5.5rem",
-          left: "2rem",
+          bottom: "2rem",
+          right: "2rem",
           zIndex: 10,
           fontFamily: "var(--font-courier)",
           fontSize: "clamp(11px, 1vw, 14px)",
