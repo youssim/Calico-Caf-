@@ -1,12 +1,11 @@
 import HeroSection from "@/components/HeroSection";
+import AboutSection from "@/components/AboutSection";
 
 export default function Home() {
   return (
     <main>
       <HeroSection />
-      <section id="a-propos" style={{ height: "100vh", background: "#f5f0e8", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <span style={{ fontFamily: "var(--font-playfair)", fontSize: 24, opacity: 0.4 }}>À propos — coming soon</span>
-      </section>
+      <AboutSection />
       <section id="menu" style={{ height: "100vh", background: "#f5f0e8", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <span style={{ fontFamily: "var(--font-playfair)", fontSize: 24, opacity: 0.4 }}>Menu — coming soon</span>
       </section>
