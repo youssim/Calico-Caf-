@@ -52,7 +52,7 @@ export default function AboutSection() {
           trigger: sectionRef.current,
           start: "top bottom",
           end: "bottom bottom",
-          scrub: 1.5,
+          scrub: 0.7,
           invalidateOnRefresh: true,
         },
       });
