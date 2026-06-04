@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Saira_Extra_Condensed, Courier_Prime } from "next/font/google";
+import { Saira_Extra_Condensed, Courier_Prime, Playfair_Display, DM_Sans } from "next/font/google";
 import "./globals.css";
 
 const saira = Saira_Extra_Condensed({
@@ -15,6 +15,19 @@ const courier = Courier_Prime({
   style: ["normal", "italic"],
 });
 
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
+});
+
+const dmSans = DM_Sans({
+  variable: "--font-dm",
+  subsets: ["latin"],
+  weight: ["300", "400"],
+});
+
 export const metadata: Metadata = {
   title: "Calico — Café de spécialité, Lille",
   description: "Brunch tous les jours. Café de spécialité. 25 Bd Carnot, Lille.",
@@ -26,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className={`${saira.variable} ${courier.variable} h-full`}>
+    <html lang="fr" className={`${saira.variable} ${courier.variable} ${playfair.variable} ${dmSans.variable} h-full`}>
       <body className="min-h-full">{children}</body>
     </html>
   );
