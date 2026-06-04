@@ -136,25 +136,8 @@ export default function HeroSection() {
         />
       </div>
 
-      {/* GOBELET — déjà présent, dépasse du bas, derrière la tagline */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/goblet1.png"
-        alt=""
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          /* ~34vh visible en haut du gobelet, le reste sort sous le pli */
-          bottom: "calc(34vh - 762px)",
-          left: "50%",
-          transform: "translateX(-50%)",
-          height: 762,
-          width: "auto",
-          zIndex: 5,
-          mixBlendMode: "multiply",
-          pointerEvents: "none",
-        }}
-      />
+      {/* Le gobelet est rendu par AboutSection (position fixed, piloté
+          par le scroll) pour une continuité pixel-perfect Hero → About. */}
 
       {/* CAFÉ DE SPÉCIALITÉ — bas droite */}
       <motion.p

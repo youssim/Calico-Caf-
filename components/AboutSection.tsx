@@ -8,6 +8,10 @@ gsap.registerPlugin(ScrollTrigger);
 
 // 544 * 1.4 ≈ 762px
 const H = 762;
+// Combien du haut du gobelet dépasse en bas de la Hero
+const PEEK_VISIBLE = 300;
+// Décalage horizontal des gobelets latéraux dans le trio final
+const SIDE = 460;
 
 export default function AboutSection() {
   const sectionRef    = useRef<HTMLDivElement>(null);
@@ -20,67 +24,99 @@ export default function AboutSection() {
   const taglineRef    = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
-    [cup1Ref, cup1LabelRef, cup2Ref, cup2LabelRef, cup3Ref, cup3LabelRef, taglineRef]
-      .forEach(r => r.current && gsap.killTweensOf(r.current));
+    const all = [cup1Ref, cup1LabelRef, cup2Ref, cup2LabelRef, cup3Ref, cup3LabelRef, taglineRef];
+    all.forEach(r => r.current && gsap.killTweensOf(r.current));
 
     const ctx = gsap.context(() => {
-      /* ── Initial states ──
-         cup1 est DÉJÀ visible (pas d'animation d'entrée) — il prolonge
-         le gobelet aperçu sur la Hero. Il démarre haut et "tombe". */
-      gsap.set(cup1Ref.current,      { opacity: 1, y: -200, scale: 1, rotation: 0 });
-      gsap.set(cup1LabelRef.current, { opacity: 0 });
-      gsap.set(cup2Ref.current,      { opacity: 0, x: -460, y: 80 });
-      gsap.set(cup2LabelRef.current, { opacity: 0 });
-      gsap.set(cup3Ref.current,      { opacity: 0, x: 460,  y: 80 });
-      gsap.set(cup3LabelRef.current, { opacity: 0 });
-      gsap.set(taglineRef.current,   { opacity: 0, y: 14 });
+      // Position de départ du gobelet 1 : il dépasse du bas (≈ PEEK_VISIBLE px visibles)
+      const peekY = () => window.innerHeight / 2 + H / 2 - PEEK_VISIBLE;
 
+      /* ── États initiaux (tout est position: fixed, centré via xPercent/yPercent) ── */
+      gsap.set(cup1Ref.current,      { xPercent: -50, yPercent: -50, y: peekY(), rotation: 0, opacity: 1 });
+      gsap.set(cup1LabelRef.current, { xPercent: -50, yPercent: -50, y: H / 2 + 40, opacity: 0 });
+      gsap.set(cup2Ref.current,      { xPercent: -50, yPercent: -50, x: -SIDE, y: 80, opacity: 0 });
+      gsap.set(cup2LabelRef.current, { xPercent: -50, yPercent: -50, x: -SIDE, y: H / 2 + 40, opacity: 0 });
+      gsap.set(cup3Ref.current,      { xPercent: -50, yPercent: -50, x:  SIDE, y: 80, opacity: 0 });
+      gsap.set(cup3LabelRef.current, { xPercent: -50, yPercent: -50, x:  SIDE, y: H / 2 + 40, opacity: 0 });
+      gsap.set(taglineRef.current,   { xPercent: -50, opacity: 0 });
+
+      /* ── Une seule timeline pilotée par le scroll, de tout en haut de la Hero
+            jusqu'au bas de la section About ──
+            start "top bottom"  = haut de About au bas du viewport = scroll page = 0 (haut de la Hero)
+            end   "bottom bottom" = bas de About atteint */
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: "top top",
+          start: "top bottom",
           end: "bottom bottom",
-          scrub: 1.8,
+          scrub: 1.5,
+          invalidateOnRefresh: true,
         },
       });
 
-      /* ── Chute scroll-driven : le gobelet descend en tournant.
-             rotation 0 → 360 (1 tour complet) et y -200 → 0 sur 0 → 78%.
-             ease "none" = linéaire avec le scroll, atterrit droit (360°=0°)
-             et centré entre les deux autres gobelets. ── */
+      /* p 0 → 0.20  (pendant la Hero) : le gobelet monte du bas vers le centre
+         en faisant un demi-tour (0 → 180°). */
       tl.to(cup1Ref.current,
-        { rotation: 360, ease: "none", duration: 0.78 }, 0);
-      tl.to(cup1Ref.current,
-        { y: 0, ease: "none", duration: 0.78 }, 0);
+        { y: 0, rotation: 180, ease: "none", duration: 0.20 }, 0);
 
-      /* ── Phase 4 — trio rises (75% → 100%) ────────────────── */
+      /* p 0.20 → 0.60 : il termine son tour (180 → 360 = droit), reste centré. */
+      tl.to(cup1Ref.current,
+        { rotation: 360, ease: "none", duration: 0.40 }, 0.20);
+
+      /* p 0.62 → 0.78 : les deux autres gobelets arrivent sur les côtés. */
       tl.to(cup2Ref.current,
-        { y: 0, opacity: 1, ease: "power2.out", duration: 0.10 }, 0.75);
+        { y: 0, opacity: 1, ease: "power2.out", duration: 0.10 }, 0.62);
       tl.to(cup3Ref.current,
-        { y: 0, opacity: 1, ease: "power2.out", duration: 0.10 }, 0.85);
+        { y: 0, opacity: 1, ease: "power2.out", duration: 0.10 }, 0.70);
 
-      tl.to(cup2LabelRef.current,
-        { opacity: 1, ease: "power2.out", duration: 0.08 }, 0.85);
-      tl.to(cup3LabelRef.current,
-        { opacity: 1, ease: "power2.out", duration: 0.08 }, 0.85);
-      tl.to(cup1LabelRef.current,
-        { opacity: 1, ease: "power2.out", duration: 0.08 }, 0.85);
+      /* p 0.78 → 0.86 : labels + tagline. */
+      tl.to(cup1LabelRef.current, { opacity: 1, ease: "power2.out", duration: 0.06 }, 0.78);
+      tl.to(cup2LabelRef.current, { opacity: 1, ease: "power2.out", duration: 0.06 }, 0.78);
+      tl.to(cup3LabelRef.current, { opacity: 1, ease: "power2.out", duration: 0.06 }, 0.78);
+      tl.to(taglineRef.current,   { opacity: 1, ease: "power2.out", duration: 0.06 }, 0.84);
 
-      tl.to(taglineRef.current,
-        { opacity: 1, y: 0, ease: "power2.out", duration: 0.06 }, 0.96);
+      /* (maintien p 0.86 → 0.93) */
+
+      /* p 0.93 → 1.0 : tout le groupe s'efface en glissant vers le haut
+         pendant qu'on entre dans la section suivante. */
+      const exit = [cup1Ref, cup2Ref, cup3Ref, cup1LabelRef, cup2LabelRef, cup3LabelRef, taglineRef];
+      exit.forEach(r =>
+        tl.to(r.current, { opacity: 0, y: "-=80", ease: "power1.in", duration: 0.07 }, 0.93)
+      );
     }, sectionRef);
 
     return () => { ctx.revert(); };
   }, []);
 
+  /* Filtre : remonte le quasi-blanc (rgb≈253) du fond du PNG vers le blanc pur,
+     pour que mix-blend-mode: multiply l'efface totalement (plus de halo). */
+  const cupStyle: React.CSSProperties = {
+    position: "fixed",
+    top: "50%",
+    left: "50%",
+    height: H,
+    width: "auto",
+    display: "block",
+    mixBlendMode: "multiply",
+    filter: "brightness(1.08)",
+    zIndex: 6,
+    pointerEvents: "none",
+    willChange: "transform, opacity",
+  };
+
   const labelStyle: React.CSSProperties = {
+    position: "fixed",
+    top: "50%",
+    left: "50%",
     fontFamily: "var(--font-dm)",
     fontSize: 11,
     letterSpacing: "2px",
     textTransform: "uppercase",
     color: "#8b7355",
-    position: "absolute",
-    zIndex: 9,
+    zIndex: 7,
+    pointerEvents: "none",
+    whiteSpace: "nowrap",
+    opacity: 0,
   };
 
   return (
@@ -89,108 +125,35 @@ export default function AboutSection() {
       id="a-propos"
       style={{ height: "500vh", background: "#f5f0e8" }}
     >
-      <div
+      {/* eslint-disable @next/next/no-img-element */}
+      <img ref={cup2Ref} src="/gobelet2.png" alt="Iced Latte"   style={cupStyle} />
+      <img ref={cup3Ref} src="/gobelet3.png" alt="Matcha"        style={cupStyle} />
+      <img ref={cup1Ref} src="/goblet1.png"  alt="Black Coffee"  style={{ ...cupStyle, zIndex: 8 }} />
+      {/* eslint-enable @next/next/no-img-element */}
+
+      <span ref={cup2LabelRef} style={labelStyle}>Iced Latte</span>
+      <span ref={cup1LabelRef} style={labelStyle}>Black Coffee</span>
+      <span ref={cup3LabelRef} style={labelStyle}>Matcha</span>
+
+      <p
+        ref={taglineRef}
         style={{
-          position: "sticky",
-          top: 0,
-          height: "100vh",
-          overflow: "hidden",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "#f5f0e8",
+          position: "fixed",
+          top: "76%",
+          left: "50%",
+          textAlign: "center",
+          fontFamily: "var(--font-playfair)",
+          fontStyle: "italic",
+          fontSize: 22,
+          color: "#1a1a1a",
+          opacity: 0,
+          zIndex: 9,
+          pointerEvents: "none",
+          whiteSpace: "nowrap",
         }}
       >
-        {/* ── Cup 1 — black coffee, scroll-rotates ─────────────── */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          ref={cup1Ref}
-          src="/goblet1.png"
-          alt="Black Coffee"
-          style={{
-            position: "absolute",
-            zIndex: 10,
-            height: H,
-            width: "auto",
-            display: "block",
-            mixBlendMode: "multiply",
-          }}
-        />
-        <span ref={cup1LabelRef} style={{
-          ...labelStyle,
-          top: `calc(50% + ${H / 2 + 10}px)`,
-        }}>
-          Black Coffee
-        </span>
-
-        {/* ── Cup 2 — iced latte ───────────────────────────────── */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          ref={cup2Ref}
-          src="/gobelet2.png"
-          alt="Iced Latte"
-          style={{
-            position: "absolute",
-            zIndex: 8,
-            height: H,
-            width: "auto",
-            display: "block",
-            mixBlendMode: "multiply",
-          }}
-        />
-        <span ref={cup2LabelRef} style={{
-          ...labelStyle,
-          top: `calc(50% + ${H / 2 + 10}px)`,
-          transform: "translateX(-460px)",
-          opacity: 0,
-        }}>
-          Iced Latte
-        </span>
-
-        {/* ── Cup 3 — matcha ───────────────────────────────────── */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          ref={cup3Ref}
-          src="/gobelet3.png"
-          alt="Matcha"
-          style={{
-            position: "absolute",
-            zIndex: 8,
-            height: H,
-            width: "auto",
-            display: "block",
-            mixBlendMode: "multiply",
-          }}
-        />
-        <span ref={cup3LabelRef} style={{
-          ...labelStyle,
-          top: `calc(50% + ${H / 2 + 10}px)`,
-          transform: "translateX(460px)",
-          opacity: 0,
-        }}>
-          Matcha
-        </span>
-
-        {/* ── Tagline ───────────────────────────────────────────── */}
-        <p
-          ref={taglineRef}
-          style={{
-            position: "absolute",
-            bottom: "10%",
-            left: 0,
-            right: 0,
-            textAlign: "center",
-            fontFamily: "var(--font-playfair)",
-            fontStyle: "italic",
-            fontSize: 22,
-            color: "#1a1a1a",
-            opacity: 0,
-            zIndex: 15,
-          }}
-        >
-          La famille Calico.
-        </p>
-      </div>
+        La famille Calico.
+      </p>
     </div>
   );
 }
