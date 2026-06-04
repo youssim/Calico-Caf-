@@ -139,7 +139,7 @@ export default function AboutSection() {
     <div
       ref={sectionRef}
       id="a-propos"
-      style={{ height: "500vh", background: "#f2ede3" }}
+      style={{ height: "500vh", background: "#f5f0e8" }}
     >
       <div
         style={{
@@ -150,7 +150,7 @@ export default function AboutSection() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#f2ede3",
+          background: "#f5f0e8",
         }}
       >
         {/* ── Cards ─────────────────────────────────────────────── */}
