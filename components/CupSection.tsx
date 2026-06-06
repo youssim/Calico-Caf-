@@ -50,7 +50,7 @@ export default function CupSection() {
       id="a-propos"
       style={{
         minHeight: "100vh",
-        background: "#f5f0e8",
+        background: "#f2ede3",
         position: "relative",
         display: "flex",
         alignItems: "center",

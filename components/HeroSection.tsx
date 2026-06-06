@@ -19,9 +19,21 @@ function scrollTo(id: string) {
   document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
 }
 
+// ─── Couleur habillage navbar (liens + tagline + bordure pill + bouton) ───
+// TEST VERT (actuel) · Latte : "#c9b99a" · Noir d'origine : "#1a1a1a"
+const NAV_COLOR = "#4a6741"; // TEST VERT
+
 export default function HeroSection() {
   return (
-    <section style={{ height: "100vh", background: "#f5f0e8", position: "relative", overflow: "hidden" }}>
+    <section style={{
+      height: "100vh",
+      backgroundColor: "#f2ede3",
+      background: "#f2ede3",
+      position: "relative",
+      overflow: "hidden",
+      margin: 0,
+      padding: 0,
+    }}>
 
       {/* NAVBAR */}
       <motion.nav
@@ -42,10 +54,10 @@ export default function HeroSection() {
           gap: "2rem",
           padding: "2px 36px",
           borderRadius: 50,
-          background: "rgba(245,240,232,0.85)",
+          background: "rgba(242,237,227,0.85)",
           backdropFilter: "blur(12px)",
           WebkitBackdropFilter: "blur(12px)",
-          border: "2px solid #1a1a1a",
+          border: `2px solid ${NAV_COLOR}`,
           whiteSpace: "nowrap",
         }}
       >
@@ -70,7 +82,7 @@ export default function HeroSection() {
                 fontFamily: "var(--font-courier)",
                 fontSize: 19,
                 fontWeight: 400,
-                color: "var(--black)",
+                color: NAV_COLOR,
                 opacity: 0.7,
                 transition: "opacity 0.2s",
                 padding: 0,
@@ -97,8 +109,8 @@ export default function HeroSection() {
           top: 18,
           right: "2rem",
           zIndex: 100,
-          background: "var(--black)",
-          color: "#f5f0e8",
+          background: NAV_COLOR,
+          color: "#f2ede3",
           fontFamily: "var(--font-courier)",
           fontSize: 13,
           fontWeight: 700,
@@ -178,7 +190,7 @@ export default function HeroSection() {
             fontSize: "clamp(60px, 13vw, 180px)",
             fontWeight: 900,
             lineHeight: 0.85,
-            color: "var(--black)",
+            color: "var(--black)", // titre héros en noir (cohérence avec la fresque)
             whiteSpace: "nowrap",
             paddingLeft: "1rem",
           }}

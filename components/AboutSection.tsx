@@ -8,156 +8,209 @@ gsap.registerPlugin(ScrollTrigger);
 
 // 544 * 1.4 ≈ 762px
 const H = 762;
-// Combien du haut du gobelet dépasse en bas de la Hero (assez pour voir
-// le couvercle + les lunettes du chien)
 const PEEK_VISIBLE = 410;
-// Inclinaison du gobelet au repos sur la Hero (se redresse au scroll)
 const TILT = 15;
-// Décalage horizontal du gobelet sur la Hero (pointe à droite du texte,
-// puis glisse vers le centre en montant)
 const HERO_X = 240;
-// Décalage horizontal des gobelets latéraux dans le trio final
-const SIDE = 460;
+
+const GREEN = "#4a6741";
+const LATTE = "#c9b99a";
+
+type Panel = {
+  // 2 brushstrokes fins + variés ; le B "boucle" (feeling circulaire)
+  shapeA: { d: string; color: string; w: number };
+  shapeB: { d: string; color: string; w: number };
+  card: { src: string; pos: React.CSSProperties; rot: number };
+  text: { side: "left" | "right"; line1: string; line2: string };
+};
+
+const PANELS: Panel[] = [
+  {
+    // S-curve fluide (latte) + petite boucle qui revient (vert)
+    shapeA: { d: "M-120,360 C 360,170 430,640 820,540 C 1180,450 1230,300 1620,620", color: LATTE, w: 72 },
+    shapeB: { d: "M1500,740 C 1300,700 1230,800 1320,690 C 1390,610 1230,610 1160,710", color: GREEN, w: 46 },
+    card: { src: "/about/carte-1.png", pos: { left: "7vw", bottom: "10vh" }, rot: -4 },
+    text: { side: "right", line1: "Chiens bienvenus.", line2: "Humains tolérés." },
+  },
+  {
+    // grand arc circulaire (vert) — continuité depuis le bas-droit du panneau 1
+    shapeA: { d: "M-120,640 C 250,210 1190,210 1620,640", color: GREEN, w: 72 },
+    shapeB: { d: "M1480,300 C 1250,270 1150,400 1290,450 C 1400,490 1300,320 1170,350", color: LATTE, w: 46 },
+    card: { src: "/about/carte-2.png", pos: { right: "7vw", bottom: "10vh" }, rot: 3 },
+    text: { side: "left", line1: "Mais d'abord,", line2: "le café." },
+  },
+];
 
 export default function AboutSection() {
-  const sectionRef    = useRef<HTMLDivElement>(null);
-  const cup1Ref       = useRef<HTMLImageElement>(null);
-  const cup1LabelRef  = useRef<HTMLSpanElement>(null);
-  const cup2Ref       = useRef<HTMLImageElement>(null);
-  const cup2LabelRef  = useRef<HTMLSpanElement>(null);
-  const cup3Ref       = useRef<HTMLImageElement>(null);
-  const cup3LabelRef  = useRef<HTMLSpanElement>(null);
-  const taglineRef    = useRef<HTMLParagraphElement>(null);
+  const sectionRef   = useRef<HTMLDivElement>(null);
+  const cup1Ref      = useRef<HTMLImageElement>(null);
+  const panelRefs    = useRef<(HTMLElement | null)[]>([]);
+  const cardRefs     = useRef<(HTMLImageElement | null)[]>([]);
+  const textRefs     = useRef<(HTMLDivElement | null)[]>([]);
+  const arcPathRef   = useRef<SVGPathElement>(null);
+  const arcSvgRef    = useRef<SVGSVGElement>(null);
+  const landingRef   = useRef<HTMLElement>(null);
+  const cupWrapRef   = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const all = [cup1Ref, cup1LabelRef, cup2Ref, cup2LabelRef, cup3Ref, cup3LabelRef, taglineRef];
-    all.forEach(r => r.current && gsap.killTweensOf(r.current));
+    gsap.killTweensOf(cup1Ref.current);
 
     const ctx = gsap.context(() => {
-      // Position de départ du gobelet 1 : il dépasse du bas (≈ PEEK_VISIBLE px visibles)
       const peekY = () => window.innerHeight / 2 + H / 2 - PEEK_VISIBLE;
 
-      /* ── États initiaux (tout est position: fixed, centré via xPercent/yPercent) ── */
-      gsap.set(cup1Ref.current,      { xPercent: -50, yPercent: -50, x: HERO_X, y: peekY(), rotation: TILT, opacity: 1 });
-      gsap.set(cup1LabelRef.current, { xPercent: -50, yPercent: -50, y: H / 2 + 40, opacity: 0 });
-      gsap.set(cup2Ref.current,      { xPercent: -50, yPercent: -50, x: -SIDE, y: 80, opacity: 0 });
-      gsap.set(cup2LabelRef.current, { xPercent: -50, yPercent: -50, x: -SIDE, y: H / 2 + 40, opacity: 0 });
-      gsap.set(cup3Ref.current,      { xPercent: -50, yPercent: -50, x:  SIDE, y: 80, opacity: 0 });
-      gsap.set(cup3LabelRef.current, { xPercent: -50, yPercent: -50, x:  SIDE, y: H / 2 + 40, opacity: 0 });
-      gsap.set(taglineRef.current,   { xPercent: -50, opacity: 0 });
+      /* ── GOBELET (seul) — animation de rotation INCHANGÉE, juste retimée
+            pour finir droit pile à la zone d'atterrissage ── */
+      gsap.set(cup1Ref.current, { xPercent: -50, yPercent: -50, x: HERO_X, y: peekY(), rotation: TILT, opacity: 1 });
 
-      /* ── Une seule timeline pilotée par le scroll, de tout en haut de la Hero
-            jusqu'au bas de la section About ──
-            start "top bottom"  = haut de About au bas du viewport = scroll page = 0 (haut de la Hero)
-            end   "bottom bottom" = bas de About atteint */
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top bottom",
-          end: "bottom bottom",
+          // fin = quand la page noire arrive en haut (= début du pin) → le gobelet
+          // est droit PILE quand la page noire se cale, puis reste tel quel.
+          endTrigger: landingRef.current,
+          end: "top top",
           scrub: 0.7,
           invalidateOnRefresh: true,
         },
       });
+      // p0→0.20 : monte au centre + amorce la rotation
+      tl.to(cup1Ref.current, { x: 0, y: 0, rotation: 187, ease: "none", duration: 0.20 }, 0);
+      // p0.20→1.0 : termine son tour → DROIT (360) pile à la fin du pin landing.
+      // Le master ScrollTrigger end="bottom bottom" inclut désormais le pin
+      // (pinSpacing) donc l'instant t=1 = sortie du pin = arc plat. Synchro auto.
+      tl.to(cup1Ref.current, { rotation: 360, ease: "none", duration: 0.80 }, 0.20);
+      // Pas de fade : le gobelet RESTE FIGÉ à center, rotation 360 (=0deg),
+      // position:fixed naturel — aucun mouvement supplémentaire.
 
-      /* p 0 → 0.20  (pendant la Hero) : le gobelet (incliné à TILT°, décalé à
-         droite) monte vers le centre (x: HERO_X → 0) en amorçant sa rotation. */
-      tl.to(cup1Ref.current,
-        { x: 0, y: 0, rotation: 187, ease: "none", duration: 0.20 }, 0);
+      /* ── Cartes + titres : chaque panneau déclenche son anim ── */
+      PANELS.forEach((panel, i) => {
+        const card = cardRefs.current[i];
+        const text = textRefs.current[i];
+        const finalRot = panel.card.rot;
+        gsap.set(card, { y: -250, opacity: 0, rotation: finalRot + 8 });
+        gsap.set(text, { opacity: 0, y: 20 });
+        const ptl = gsap.timeline({
+          scrollTrigger: { trigger: panelRefs.current[i], start: "top 60%" },
+        });
+        ptl.to(card, { y: 0, opacity: 1, rotation: finalRot, duration: 0.9, ease: "back.out(1.5)" }, 0);
+        ptl.to(text, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.3);
+      });
 
-      /* p 0.20 → 0.60 : il termine son tour (180 → 360 = droit), reste centré. */
-      tl.to(cup1Ref.current,
-        { rotation: 360, ease: "none", duration: 0.40 }, 0.20);
+      /* ── COURBE TARU BALI (bande 200px, noir-rempli, courbe plus ovale).
+            Path morph : "M0,0 Q720,200 1440,0 L1440,200 L0,200 Z" (courbé profond)
+                       → "M0,0 Q720,0   1440,0 L1440,200 L0,200 Z" (plat). ── */
+      const renderArc = (p: number) => {
+        const path = arcPathRef.current;
+        if (!path) return;
+        const cy = 200 * (1 - p); // control point y : 200 → 0
+        path.setAttribute("d", `M0,0 Q720,${cy} 1440,0 L1440,200 L0,200 Z`);
+      };
+      renderArc(0);
+      const arcProxy = { p: 0 };
+      gsap.to(arcProxy, {
+        p: 1, ease: "none",
+        scrollTrigger: {
+          trigger: landingRef.current,
+          start: "top bottom",
+          end: "top top",
+          scrub: 0.7,
+        },
+        onUpdate: () => renderArc(arcProxy.p),
+      });
 
-      /* p 0.62 → 0.78 : les deux autres gobelets arrivent sur les côtés. */
-      tl.to(cup2Ref.current,
-        { y: 0, opacity: 1, ease: "power2.out", duration: 0.10 }, 0.62);
-      tl.to(cup3Ref.current,
-        { y: 0, opacity: 1, ease: "power2.out", duration: 0.10 }, 0.70);
-
-      /* p 0.78 → 0.86 : labels + tagline. */
-      tl.to(cup1LabelRef.current, { opacity: 1, ease: "power2.out", duration: 0.06 }, 0.78);
-      tl.to(cup2LabelRef.current, { opacity: 1, ease: "power2.out", duration: 0.06 }, 0.78);
-      tl.to(cup3LabelRef.current, { opacity: 1, ease: "power2.out", duration: 0.06 }, 0.78);
-      tl.to(taglineRef.current,   { opacity: 1, ease: "power2.out", duration: 0.06 }, 0.84);
-
-      /* (maintien p 0.86 → 0.93) */
-
-      /* p 0.93 → 1.0 : tout le groupe s'efface en glissant vers le haut
-         pendant qu'on entre dans la section suivante. */
-      const exit = [cup1Ref, cup2Ref, cup3Ref, cup1LabelRef, cup2LabelRef, cup3LabelRef, taglineRef];
-      exit.forEach(r =>
-        tl.to(r.current, { opacity: 0, y: "-=80", ease: "power1.in", duration: 0.07 }, 0.93)
+      /* ── SORTIE : le gobelet repart AVEC la page noire. Tant que la page noire
+            remplit l'écran → gobelet centré droit. Dès qu'on continue à scroller,
+            la page noire défile vers le haut et le gobelet monte EXACTEMENT à la
+            même vitesse (collé à elle) → il sort par le haut avec elle et ne reste
+            JAMAIS par-dessus menu/FAQ/infos. On translate le WRAPPER. ── */
+      gsap.fromTo(cupWrapRef.current,
+        { y: 0 },
+        {
+          y: () => -window.innerHeight,
+          ease: "none",
+          scrollTrigger: {
+            trigger: landingRef.current,
+            start: "top top",     // page noire plein écran (gobelet centré)
+            end: "bottom top",    // page noire entièrement sortie par le haut
+            scrub: true,
+          },
+        }
       );
     }, sectionRef);
 
     return () => { ctx.revert(); };
   }, []);
 
-  /* Les PNG ont désormais un fond transparent (détourés) — plus besoin de
-     mix-blend-mode (qui buggait sur Safari avec les couches composées). */
-  const cupStyle: React.CSSProperties = {
-    position: "fixed",
-    top: "50%",
-    left: "50%",
-    height: H,
-    width: "auto",
-    display: "block",
-    zIndex: 6,
-    pointerEvents: "none",
-    willChange: "transform, opacity",
-  };
-
-  const labelStyle: React.CSSProperties = {
-    position: "fixed",
-    top: "50%",
-    left: "50%",
-    fontFamily: "var(--font-dm)",
-    fontSize: 11,
-    letterSpacing: "2px",
-    textTransform: "uppercase",
-    color: "#8b7355",
-    zIndex: 7,
-    pointerEvents: "none",
-    whiteSpace: "nowrap",
-    opacity: 0,
-  };
-
   return (
-    <div
-      ref={sectionRef}
-      id="a-propos"
-      style={{ height: "500vh", background: "#f5f0e8" }}
-    >
-      {/* eslint-disable @next/next/no-img-element */}
-      <img ref={cup2Ref} src="/gobelet2.png?v=2" alt="Iced Latte"   style={cupStyle} />
-      <img ref={cup3Ref} src="/gobelet3.png?v=2" alt="Matcha"        style={cupStyle} />
-      <img ref={cup1Ref} src="/goblet1.png?v=2"  alt="Black Coffee"  style={{ ...cupStyle, zIndex: 11 }} />
-      {/* eslint-enable @next/next/no-img-element */}
+    <div ref={sectionRef} id="a-propos" style={{ background: "#f2ede3" }}>
+      {/* ════════ FOND : 2 panneaux plein écran (le gobelet flotte au-dessus) ════════ */}
+      {PANELS.map((panel, i) => (
+        <section
+          key={i}
+          ref={(el) => { panelRefs.current[i] = el; }}
+          style={{ position: "relative", width: "100%", height: "100vh", background: "#f2ede3", overflow: "hidden" }}
+        >
+          {/* 2 brushstrokes (z-index 0) */}
+          <svg viewBox="0 0 1440 900" preserveAspectRatio="none"
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", zIndex: 0 }}>
+            <path d={panel.shapeA.d} fill="none" stroke={panel.shapeA.color}
+              strokeWidth={panel.shapeA.w} strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+            <path d={panel.shapeB.d} fill="none" stroke={panel.shapeB.color}
+              strokeWidth={panel.shapeB.w} strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+          </svg>
 
-      <span ref={cup2LabelRef} style={labelStyle}>Iced Latte</span>
-      <span ref={cup1LabelRef} style={labelStyle}>Black Coffee</span>
-      <span ref={cup3LabelRef} style={labelStyle}>Matcha</span>
+          {/* Carte poster détourée (z-index 2) */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img ref={(el) => { cardRefs.current[i] = el; }} src={panel.card.src} alt=""
+            style={{ position: "absolute", width: 300, height: "auto", zIndex: 2, ...panel.card.pos }} />
 
-      <p
-        ref={taglineRef}
-        style={{
-          position: "fixed",
-          top: "76%",
-          left: "50%",
-          textAlign: "center",
-          fontFamily: "var(--font-playfair)",
-          fontStyle: "italic",
-          fontSize: 22,
-          color: "#1a1a1a",
-          opacity: 0,
-          zIndex: 9,
-          pointerEvents: "none",
-          whiteSpace: "nowrap",
-        }}
-      >
-        La famille Calico.
-      </p>
+          {/* Titre punchline (z-index 2) */}
+          <div ref={(el) => { textRefs.current[i] = el; }}
+            style={{
+              position: "absolute",
+              top: "50%",
+              transform: "translateY(-50%)",
+              [panel.text.side]: "clamp(40px, 7vw, 130px)",
+              maxWidth: "min(44vw, 540px)",
+              zIndex: 2,
+              fontFamily: "var(--font-saira)",
+              fontWeight: 900,
+              color: "#1a1a1a",
+              fontSize: "clamp(2.5rem, 6vw, 5rem)",
+              lineHeight: 0.92,
+            } as React.CSSProperties}>
+            <div>{panel.text.line1}</div>
+            <div>{panel.text.line2}</div>
+          </div>
+        </section>
+      ))}
+
+      {/* ════════ ATTERRISSAGE NOIR (pinned 100vh = scroll-lock).
+            La courbe Taru Bali ci-dessous "dripse" du crème vers le noir au top. ════════ */}
+      <section ref={landingRef} style={{
+        position: "relative",
+        width: "100%",
+        height: "100vh",
+        background: "#1a1a1a",
+        margin: 0,
+      }}>
+        {/* Courbe Taru Bali : bande NOIRE (#1a1a1a) de 120px collée en haut du noir,
+            son bord supérieur dipse dans le crème puis se redresse. */}
+        <svg ref={arcSvgRef} viewBox="0 0 1440 200" preserveAspectRatio="none"
+          style={{ position: "absolute", top: -200, left: 0, width: "100%", height: 200,
+            display: "block", pointerEvents: "none", zIndex: 1 }}>
+          <path ref={arcPathRef} d="M0,0 Q720,200 1440,0 L1440,200 L0,200 Z" fill="#1a1a1a" />
+        </svg>
+      </section>
+
+      {/* ════════ GOBELET — wrapper fixed plein écran (z 11). Le wrapper gère la
+            SORTIE (translate avec la page noire) ; l'img gère le spin/montée. ════════ */}
+      <div ref={cupWrapRef} style={{ position: "fixed", inset: 0, zIndex: 11, pointerEvents: "none", willChange: "transform" }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img ref={cup1Ref} src="/goblet1.png?v=2" alt="Black Coffee"
+          style={{ position: "absolute", top: "50%", left: "50%", height: H, width: "auto", display: "block",
+            willChange: "transform, opacity" }} />
+      </div>
     </div>
   );
 }

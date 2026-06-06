@@ -6,13 +6,13 @@ export default function Home() {
     <main>
       <HeroSection />
       <AboutSection />
-      <section id="menu" style={{ height: "100vh", background: "#f5f0e8", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <section id="menu" style={{ height: "100vh", background: "#f2ede3", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <span style={{ fontFamily: "var(--font-playfair)", fontSize: 24, opacity: 0.4 }}>Menu — coming soon</span>
       </section>
-      <section id="faq" style={{ height: "100vh", background: "#f5f0e8", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <section id="faq" style={{ height: "100vh", background: "#f2ede3", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <span style={{ fontFamily: "var(--font-playfair)", fontSize: 24, opacity: 0.4 }}>FAQ — coming soon</span>
       </section>
-      <section id="infos" style={{ height: "100vh", background: "#f5f0e8", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <section id="infos" style={{ height: "100vh", background: "#f2ede3", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <span style={{ fontFamily: "var(--font-playfair)", fontSize: 24, opacity: 0.4 }}>Infos — coming soon</span>
       </section>
     </main>

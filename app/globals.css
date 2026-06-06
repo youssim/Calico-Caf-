@@ -2,7 +2,7 @@
 
 :root {
   --black: #1a1a1a;
-  --cream: #f5f0e8;
+  --cream: #f2ede3;
   --cafe: #8b7355;
   --latte: #c9b99a;
   --green: #4a6741;
@@ -28,7 +28,10 @@ html {
 }
 
 body {
-  background: #f5f0e8;
+  background-color: #f2ede3 !important;
+  background: #f2ede3 !important;
   color: var(--black);
   -webkit-font-smoothing: antialiased;
 }
+
+main, section { margin: 0; padding: 0; }
