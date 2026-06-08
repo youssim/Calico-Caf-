@@ -138,7 +138,7 @@ export default function HeroSection() {
       }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/fresque-v3.png"
+          src="/fresque-v3.png?v=2"
           alt="Fresque Calico"
           style={{
             width: "100%",

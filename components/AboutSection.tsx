@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import MenuCarousel from "./MenuCarousel";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -46,10 +47,18 @@ export default function AboutSection() {
   const panelRefs    = useRef<(HTMLElement | null)[]>([]);
   const cardRefs     = useRef<(HTMLImageElement | null)[]>([]);
   const textRefs     = useRef<(HTMLDivElement | null)[]>([]);
-  const arcPathRef   = useRef<SVGPathElement>(null);
-  const arcSvgRef    = useRef<SVGSVGElement>(null);
   const landingRef   = useRef<HTMLElement>(null);
   const cupWrapRef   = useRef<HTMLDivElement>(null);
+  const cupDrawnRef  = useRef<HTMLImageElement>(null);
+  // asset du gobelet dessiné — change selon la catégorie active du carrousel
+  const DRAWN_DEFAULT = "/carousel/gobelet-dessin.png?v=2";
+  const [drawnSrc, setDrawnSrc] = useState(DRAWN_DEFAULT);
+  // src + décalage Y par asset → toutes les "lignes de table" alignées (même surface)
+  const ASSETS: Record<string, { src: string; offsetY: number }> = {
+    "White Coffee": { src: "/carousel/white-coffee.png", offsetY: 84 },
+    "Cold Drinks":  { src: "/carousel/cold-drinks.png?v=1", offsetY: -4 },
+    "Cocktail":     { src: "/carousel/cocktail.png", offsetY: -158 },
+  };
 
   useEffect(() => {
     gsap.killTweensOf(cup1Ref.current);
@@ -60,6 +69,8 @@ export default function AboutSection() {
       /* ── GOBELET (seul) — animation de rotation INCHANGÉE, juste retimée
             pour finir droit pile à la zone d'atterrissage ── */
       gsap.set(cup1Ref.current, { xPercent: -50, yPercent: -50, x: HERO_X, y: peekY(), rotation: TILT, opacity: 1 });
+      // Gobelet DESSINÉ : superposé au centre (état final du vrai gobelet), caché au départ
+      gsap.set(cupDrawnRef.current, { xPercent: -50, yPercent: -50, opacity: 0 });
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -73,14 +84,14 @@ export default function AboutSection() {
           invalidateOnRefresh: true,
         },
       });
-      // p0→0.20 : monte au centre + amorce la rotation
-      tl.to(cup1Ref.current, { x: 0, y: 0, rotation: 187, ease: "none", duration: 0.20 }, 0);
-      // p0.20→1.0 : termine son tour → DROIT (360) pile à la fin du pin landing.
-      // Le master ScrollTrigger end="bottom bottom" inclut désormais le pin
-      // (pinSpacing) donc l'instant t=1 = sortie du pin = arc plat. Synchro auto.
-      tl.to(cup1Ref.current, { rotation: 360, ease: "none", duration: 0.80 }, 0.20);
-      // Pas de fade : le gobelet RESTE FIGÉ à center, rotation 360 (=0deg),
-      // position:fixed naturel — aucun mouvement supplémentaire.
+      // ROTATION : vitesse CONSTANTE sur tout le parcours (TILT → 360), ease none.
+      // → même sensation de spin du début (décalé/hero) jusqu'au centre, plus de
+      //   coup d'accélération au démarrage.
+      tl.to(cup1Ref.current, { rotation: 360, ease: "none", duration: 1.0 }, 0);
+      // GLISSE : du coin (hero, décalé à droite, en bas) vers le centre, avec un
+      // ease doux (power2.out) → sensation d'être guidé élégamment vers le centre.
+      tl.to(cup1Ref.current, { x: 0, y: 0, ease: "power2.out", duration: 0.34 }, 0);
+      // Le gobelet finit DROIT (360) pile quand la page noire se cale (endTrigger).
 
       /* ── Cartes + titres : chaque panneau déclenche son anim ── */
       PANELS.forEach((panel, i) => {
@@ -96,46 +107,51 @@ export default function AboutSection() {
         ptl.to(text, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.3);
       });
 
-      /* ── COURBE TARU BALI (bande 200px, noir-rempli, courbe plus ovale).
-            Path morph : "M0,0 Q720,200 1440,0 L1440,200 L0,200 Z" (courbé profond)
-                       → "M0,0 Q720,0   1440,0 L1440,200 L0,200 Z" (plat). ── */
-      const renderArc = (p: number) => {
-        const path = arcPathRef.current;
-        if (!path) return;
-        const cy = 200 * (1 - p); // control point y : 200 → 0
-        path.setAttribute("d", `M0,0 Q720,${cy} 1440,0 L1440,200 L0,200 Z`);
-      };
-      renderArc(0);
-      const arcProxy = { p: 0 };
-      gsap.to(arcProxy, {
-        p: 1, ease: "none",
+      /* ── PAUSE + CARROUSEL : la page noire (= le carrousel menu) est STICKY
+            l'espace d'1 scroll. Le gobelet reste figé centré dessus pendant qu'on
+            navigue le menu au clic (flèches/toggle). À la toute fin, le gobelet
+            s'efface (fondu, il ne bouge pas) en laissant la place au menu suivant. ── */
+      const pinTl = gsap.timeline({
         scrollTrigger: {
           trigger: landingRef.current,
-          start: "top bottom",
-          end: "top top",
-          scrub: 0.7,
+          start: "top top",
+          end: "+=100%",
+          pin: true,
+          pinSpacing: true,
+          anticipatePin: 1,
+          scrub: true,
         },
-        onUpdate: () => renderArc(arcProxy.p),
+      });
+      pinTl.to({}, { duration: 0.9 }); // page tenue → navigation carrousel au clic
+      pinTl.to(cupWrapRef.current, { opacity: 0, ease: "power1.in", duration: 0.1 });
+
+      /* ── NAVBAR : disparaît quand le carrousel est en vue (le toggle
+            À boire/À manger la remplace), réapparaît en remontant. toggleClass
+            gère le sens automatiquement ; la classe CSS .nav-hidden (!important)
+            l'emporte sur l'opacité inline de framer-motion. ── */
+      const navEls = [document.querySelector("nav"), document.querySelector(".nav-cta")].filter(Boolean) as Element[];
+      ScrollTrigger.create({
+        trigger: landingRef.current,
+        start: "top 70%",
+        end: "bottom top",
+        toggleClass: { targets: navEls, className: "nav-hidden" },
       });
 
-      /* ── SORTIE : le gobelet repart AVEC la page noire. Tant que la page noire
-            remplit l'écran → gobelet centré droit. Dès qu'on continue à scroller,
-            la page noire défile vers le haut et le gobelet monte EXACTEMENT à la
-            même vitesse (collé à elle) → il sort par le haut avec elle et ne reste
-            JAMAIS par-dessus menu/FAQ/infos. On translate le WRAPPER. ── */
-      gsap.fromTo(cupWrapRef.current,
-        { y: 0 },
-        {
-          y: () => -window.innerHeight,
-          ease: "none",
-          scrollTrigger: {
-            trigger: landingRef.current,
-            start: "top top",     // page noire plein écran (gobelet centré)
-            end: "bottom top",    // page noire entièrement sortie par le haut
-            scrub: true,
-          },
-        }
-      );
+      /* ── CROSSFADE : à l'atterrissage (gobelet centré droit), le vrai gobelet
+            se fond vers le gobelet DESSINÉ (même position/taille/centre).
+            En remontant, inverse → le vrai gobelet revient et reprend le SPINLAND. ── */
+      ScrollTrigger.create({
+        trigger: landingRef.current,
+        start: "top top",
+        onEnter: () => {
+          gsap.to(cup1Ref.current, { opacity: 0, duration: 0.6, ease: "power2.inOut" });
+          gsap.to(cupDrawnRef.current, { opacity: 1, duration: 0.6, ease: "power2.inOut" });
+        },
+        onLeaveBack: () => {
+          gsap.to(cupDrawnRef.current, { opacity: 0, duration: 0.6, ease: "power2.inOut" });
+          gsap.to(cup1Ref.current, { opacity: 1, duration: 0.6, ease: "power2.inOut" });
+        },
+      });
     }, sectionRef);
 
     return () => { ctx.revert(); };
@@ -193,23 +209,30 @@ export default function AboutSection() {
         height: "100vh",
         background: "#1a1a1a",
         margin: 0,
+        overflow: "hidden",
       }}>
-        {/* Courbe Taru Bali : bande NOIRE (#1a1a1a) de 120px collée en haut du noir,
-            son bord supérieur dipse dans le crème puis se redresse. */}
-        <svg ref={arcSvgRef} viewBox="0 0 1440 200" preserveAspectRatio="none"
-          style={{ position: "absolute", top: -200, left: 0, width: "100%", height: 200,
-            display: "block", pointerEvents: "none", zIndex: 1 }}>
-          <path ref={arcPathRef} d="M0,0 Q720,200 1440,0 L1440,200 L0,200 Z" fill="#1a1a1a" />
-        </svg>
+        {/* Carrousel menu (state-driven, navigation au clic). Le gobelet fixed
+            flotte au-dessus (z 11), pointer-events none → les clics passent. */}
+        <MenuCarousel onCategoryChange={(name) => {
+          const a = ASSETS[name];
+          setDrawnSrc(a?.src || DRAWN_DEFAULT);
+          gsap.set(cupDrawnRef.current, { y: a?.offsetY ?? 0 });
+        }} />
       </section>
 
       {/* ════════ GOBELET — wrapper fixed plein écran (z 11). Le wrapper gère la
             SORTIE (translate avec la page noire) ; l'img gère le spin/montée. ════════ */}
-      <div ref={cupWrapRef} style={{ position: "fixed", inset: 0, zIndex: 11, pointerEvents: "none", willChange: "transform" }}>
+      <div ref={cupWrapRef} style={{ position: "fixed", inset: 0, zIndex: 11, pointerEvents: "none",
+        transform: "translateZ(0)", backfaceVisibility: "hidden" }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img ref={cup1Ref} src="/goblet1.png?v=2" alt="Black Coffee"
           style={{ position: "absolute", top: "50%", left: "50%", height: H, width: "auto", display: "block",
-            willChange: "transform, opacity" }} />
+            backfaceVisibility: "hidden" }} />
+        {/* Gobelet DESSINÉ (carrousel) — même position/taille, crossfade au landing */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img ref={cupDrawnRef} src={drawnSrc} alt=""
+          style={{ position: "absolute", top: "50%", left: "50%", height: H, width: "auto", display: "block",
+            backfaceVisibility: "hidden", filter: "brightness(0) invert(1)" }} />
       </div>
     </div>
   );
