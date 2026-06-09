@@ -18,7 +18,8 @@ const TERRA = "#d45a30";
 
 type Panel = {
   photo: { src: string; side: "left" | "right"; rot: number };
-  text: { side: "left" | "right"; body: React.ReactNode };
+  text: { side: "left" | "right"; vAlign: "top" | "bottom"; body: React.ReactNode };
+  poster: { src: string; side: "left" | "right"; vAlign: "top" | "bottom"; rot: number; w: string };
 };
 
 const pStyle: React.CSSProperties = { marginBottom: 16 };
@@ -27,8 +28,10 @@ const PANELS: Panel[] = [
   {
     // L'histoire / le nom — photo patronne+chien à droite, texte à gauche
     photo: { src: "/patronne-chien.jpeg", side: "right", rot: 3 },
+    poster: { src: "/about/carte-1.png", side: "left", vAlign: "bottom", rot: -5, w: "min(21vw, 290px)" },
     text: {
       side: "left",
+      vAlign: "top",
       body: (
         <>
           <p style={pStyle}>
@@ -48,8 +51,10 @@ const PANELS: Panel[] = [
   {
     // L'équipe / coffee dealer — photo équipe à gauche, texte à droite
     photo: { src: "/equipe.jpeg", side: "left", rot: -3 },
+    poster: { src: "/about/carte-2.png", side: "right", vAlign: "bottom", rot: 5, w: "min(18vw, 258px)" },
     text: {
       side: "right",
+      vAlign: "top",
       body: (
         <>
           <p style={pStyle}>
@@ -307,13 +312,25 @@ export default function AboutSection() {
               boxShadow: "0 18px 50px rgba(26,26,26,0.18)",
             } as React.CSSProperties} />
 
+          {/* Affiche du café "punaisée" (z-index 1, déco — vrais posters du lieu) */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={panel.poster.src} alt=""
+            style={{
+              position: "absolute",
+              [panel.poster.side]: "clamp(24px, 4vw, 70px)",
+              ...(panel.poster.vAlign === "top" ? { top: "clamp(80px, 9vh, 110px)" } : { bottom: "4vh" }),
+              width: panel.poster.w,
+              height: "auto",
+              zIndex: 1,
+              transform: `rotate(${panel.poster.rot}deg)`,
+            } as React.CSSProperties} />
+
           {/* Texte histoire (z-index 2) */}
           <div ref={(el) => { textRefs.current[i] = el; }}
             style={{
               position: "absolute",
-              top: "50%",
-              transform: "translateY(-50%)",
               [panel.text.side]: "clamp(24px, 5vw, 90px)",
+              ...(panel.text.vAlign === "top" ? { top: "clamp(92px, 14vh, 150px)" } : { bottom: "8vh" }),
               maxWidth: "min(32vw, 380px)",
               zIndex: 2,
               fontFamily: "var(--font-courier)",

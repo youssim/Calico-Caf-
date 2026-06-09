@@ -261,8 +261,8 @@ export default function MenuCarousel({ onCategoryChange }: { onCategoryChange?: 
       {/* LÉGENDE régimes — seulement sur "À manger" (où apparaissent V/VG/VGA) */}
       {group === "manger" && (
         <div key={`legend-${animKey}`} className="mc-item" style={{
-          position: "absolute", bottom: "9.5%", left: "50%", transform: "translateX(-50%)",
-          display: "flex", gap: "clamp(14px, 2vw, 28px)", flexWrap: "wrap", justifyContent: "center",
+          position: "absolute", bottom: "6%", left: "6vw",
+          display: "flex", flexDirection: "column", gap: 4, alignItems: "flex-start",
           fontFamily: "var(--font-courier)", fontSize: "clamp(10px, 0.8vw, 12px)",
           color: ink, opacity: 0.6, zIndex: 4, letterSpacing: "0.04em",
         }}>
