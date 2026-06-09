@@ -14,30 +14,65 @@ const TILT = 15;
 const HERO_X = 240;
 
 const GREEN = "#4a6741";
-const LATTE = "#c9b99a";
+const TERRA = "#d45a30";
 
 type Panel = {
-  // 2 brushstrokes fins + variés ; le B "boucle" (feeling circulaire)
-  shapeA: { d: string; color: string; w: number };
-  shapeB: { d: string; color: string; w: number };
-  card: { src: string; pos: React.CSSProperties; rot: number };
-  text: { side: "left" | "right"; line1: string; line2: string };
+  photo: { src: string; side: "left" | "right"; rot: number };
+  text: { side: "left" | "right"; body: React.ReactNode };
 };
+
+const pStyle: React.CSSProperties = { marginBottom: 16 };
 
 const PANELS: Panel[] = [
   {
-    // S-curve fluide (latte) + petite boucle qui revient (vert)
-    shapeA: { d: "M-120,360 C 360,170 430,640 820,540 C 1180,450 1230,300 1620,620", color: LATTE, w: 72 },
-    shapeB: { d: "M1500,740 C 1300,700 1230,800 1320,690 C 1390,610 1230,610 1160,710", color: GREEN, w: 46 },
-    card: { src: "/about/carte-1.png", pos: { left: "7vw", bottom: "10vh" }, rot: -4 },
-    text: { side: "right", line1: "Chiens bienvenus.", line2: "Humains tolérés." },
+    // L'histoire / le nom — photo patronne+chien à droite, texte à gauche
+    photo: { src: "/patronne-chien.jpeg", side: "right", rot: 3 },
+    text: {
+      side: "left",
+      body: (
+        <>
+          <p style={pStyle}>
+            Tout commence par une histoire de pirate. Le nom <strong>Calico</strong> vient
+            de <strong>Calico&nbsp;Jack</strong>, le flibustier resté célèbre pour avoir,
+            le premier, embarqué des femmes dans son équipage.
+          </p>
+          <p style={pStyle}>
+            Ici, le <span style={{ color: GREEN, fontWeight: 700 }}>café de spécialité</span> est
+            une obsession : grains pointus, extractions soignées, et un brunch maison du
+            matin au début d'après-midi.
+          </p>
+        </>
+      ),
+    },
   },
   {
-    // grand arc circulaire (vert) — continuité depuis le bas-droit du panneau 1
-    shapeA: { d: "M-120,640 C 250,210 1190,210 1620,640", color: GREEN, w: 72 },
-    shapeB: { d: "M1480,300 C 1250,270 1150,400 1290,450 C 1400,490 1300,320 1170,350", color: LATTE, w: 46 },
-    card: { src: "/about/carte-2.png", pos: { right: "7vw", bottom: "10vh" }, rot: 3 },
-    text: { side: "left", line1: "Mais d'abord,", line2: "le café." },
+    // L'équipe / coffee dealer — photo équipe à gauche, texte à droite
+    photo: { src: "/equipe.jpeg", side: "left", rot: -3 },
+    text: {
+      side: "right",
+      body: (
+        <>
+          <p style={pStyle}>
+            Du beige doux, des plantes partout, une lumière à la fois généreuse et
+            tamisée — un cocon où l'on traîne seul avec son laptop ou à plusieurs,{" "}
+            <strong>chien compris</strong>.
+          </p>
+          {/* À VÉRIFIER (Salim) : si Fabio fait aussi partie de la direction, le nommer
+              ici → "Aïka, Luca et Fabio, ..." au lieu de "entourés de leur équipe". */}
+          <p style={pStyle}>
+            Derrière le comptoir, <strong>Aïka et Luca</strong>, le couple qui a tout
+            imaginé, entourés de leur équipe.
+          </p>
+          <p style={{ ...pStyle, marginBottom: 22 }}>
+            Nous, on préfère dire qu'on est vos{" "}
+            <span style={{ color: TERRA, fontWeight: 700 }}>coffee dealers</span>.
+          </p>
+          <p style={{ fontFamily: "var(--font-saira)", fontWeight: 900, textTransform: "uppercase", color: TERRA, fontSize: "clamp(1.3rem, 1.8vw, 1.8rem)", lineHeight: 1, letterSpacing: "-0.01em" }}>
+            Soutenez votre coffee dealer.
+          </p>
+        </>
+      ),
+    },
   },
 ];
 
@@ -166,7 +201,7 @@ export default function AboutSection() {
       PANELS.forEach((panel, i) => {
         const card = cardRefs.current[i];
         const text = textRefs.current[i];
-        const finalRot = panel.card.rot;
+        const finalRot = panel.photo.rot;
         gsap.set(card, { y: -250, opacity: 0, rotation: finalRot + 8 });
         gsap.set(text, { opacity: 0, y: 20 });
         const ptl = gsap.timeline({
@@ -255,37 +290,38 @@ export default function AboutSection() {
           ref={(el) => { panelRefs.current[i] = el; }}
           style={{ position: "relative", width: "100%", height: "100vh", background: "#f2ede3", overflow: "hidden" }}
         >
-          {/* 2 brushstrokes (z-index 0) */}
-          <svg viewBox="0 0 1440 900" preserveAspectRatio="none"
-            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", zIndex: 0 }}>
-            <path d={panel.shapeA.d} fill="none" stroke={panel.shapeA.color}
-              strokeWidth={panel.shapeA.w} strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-            <path d={panel.shapeB.d} fill="none" stroke={panel.shapeB.color}
-              strokeWidth={panel.shapeB.w} strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-          </svg>
-
-          {/* Carte poster détourée (z-index 2) */}
+          {/* Photo réelle (z-index 2) — sur un côté, le gobelet descend au centre */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img ref={(el) => { cardRefs.current[i] = el; }} src={panel.card.src} alt=""
-            style={{ position: "absolute", width: 300, height: "auto", zIndex: 2, ...panel.card.pos }} />
+          <img ref={(el) => { cardRefs.current[i] = el; }} src={panel.photo.src} alt=""
+            style={{
+              position: "absolute",
+              top: "50%",
+              transform: "translateY(-50%)",
+              [panel.photo.side]: "clamp(24px, 5vw, 90px)",
+              width: "min(32vw, 440px)",
+              height: "auto",
+              aspectRatio: "1 / 1",
+              objectFit: "cover",
+              borderRadius: 20,
+              zIndex: 2,
+              boxShadow: "0 18px 50px rgba(26,26,26,0.18)",
+            } as React.CSSProperties} />
 
-          {/* Titre punchline (z-index 2) */}
+          {/* Texte histoire (z-index 2) */}
           <div ref={(el) => { textRefs.current[i] = el; }}
             style={{
               position: "absolute",
               top: "50%",
               transform: "translateY(-50%)",
-              [panel.text.side]: "clamp(40px, 7vw, 130px)",
-              maxWidth: "min(44vw, 540px)",
+              [panel.text.side]: "clamp(24px, 5vw, 90px)",
+              maxWidth: "min(32vw, 380px)",
               zIndex: 2,
-              fontFamily: "var(--font-saira)",
-              fontWeight: 900,
+              fontFamily: "var(--font-courier)",
               color: "#1a1a1a",
-              fontSize: "clamp(2.5rem, 6vw, 5rem)",
-              lineHeight: 0.92,
+              fontSize: "clamp(0.95rem, 1.05vw, 1.1rem)",
+              lineHeight: 1.7,
             } as React.CSSProperties}>
-            <div>{panel.text.line1}</div>
-            <div>{panel.text.line2}</div>
+            {panel.text.body}
           </div>
         </section>
       ))}
