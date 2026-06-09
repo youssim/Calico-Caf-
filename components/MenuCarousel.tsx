@@ -258,6 +258,20 @@ export default function MenuCarousel({ onCategoryChange }: { onCategoryChange?: 
         </div>
       )}
 
+      {/* LÉGENDE régimes — seulement sur "À manger" (où apparaissent V/VG/VGA) */}
+      {group === "manger" && (
+        <div key={`legend-${animKey}`} className="mc-item" style={{
+          position: "absolute", bottom: "9.5%", left: "50%", transform: "translateX(-50%)",
+          display: "flex", gap: "clamp(14px, 2vw, 28px)", flexWrap: "wrap", justifyContent: "center",
+          fontFamily: "var(--font-courier)", fontSize: "clamp(10px, 0.8vw, 12px)",
+          color: ink, opacity: 0.6, zIndex: 4, letterSpacing: "0.04em",
+        }}>
+          <span><b style={{ opacity: 1 }}>V</b> végétarien</span>
+          <span><b style={{ opacity: 1 }}>VG</b> végan</span>
+          <span><b style={{ opacity: 1 }}>VGA</b> végan adaptable</span>
+        </div>
+      )}
+
       {/* FLÈCHES — proches du gobelet (≈80px de ses bords), centrées verticalement */}
       <div className="mc-arrow" onClick={prev} style={{
         position: "absolute", top: "50%", left: "calc(50% - 320px)", transform: "translate(-50%, -50%)",
