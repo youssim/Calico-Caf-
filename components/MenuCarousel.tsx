@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 type Item = { name: string; price: string };
 type Category = {
@@ -90,19 +90,20 @@ const GROUPS = {
   manger: CATEGORIES.filter((c) => c.group === "manger"),
 };
 
-export default function MenuCarousel({ onCategoryChange }: { onCategoryChange?: (name: string) => void }) {
+export default function MenuCarousel({ onCategoryChange }: { onCategoryChange?: (name: string, dir?: number) => void }) {
   const [group, setGroup] = useState<"boire" | "manger">("boire");
   const [idx, setIdx] = useState(0); // index dans le groupe actif
+  const dirRef = useRef(0); // sens du dernier changement (+1 droite, -1 gauche, 0 toggle/init)
 
   const cats = GROUPS[group];
   const cat = cats[idx];
 
   // notifie le parent (AboutSection) pour swapper l'asset du gobelet dessiné
-  useEffect(() => { onCategoryChange?.(cat.name); }, [cat.name, onCategoryChange]);
+  useEffect(() => { onCategoryChange?.(cat.name, dirRef.current); }, [cat.name, onCategoryChange]);
 
-  const switchGroup = (g: "boire" | "manger") => { setGroup(g); setIdx(0); };
-  const prev = () => setIdx((i) => (i - 1 + cats.length) % cats.length);
-  const next = () => setIdx((i) => (i + 1) % cats.length);
+  const switchGroup = (g: "boire" | "manger") => { dirRef.current = 0; setGroup(g); setIdx(0); };
+  const prev = () => { dirRef.current = -1; setIdx((i) => (i - 1 + cats.length) % cats.length); };
+  const next = () => { dirRef.current = 1; setIdx((i) => (i + 1) % cats.length); };
 
   // clé qui change à chaque changement de catégorie → relance les animations CSS
   const animKey = `${group}-${idx}`;
@@ -188,6 +189,27 @@ export default function MenuCarousel({ onCategoryChange }: { onCategoryChange?: 
         .mc-arrow:hover { transform: scale(1.1); }
       `}</style>
 
+      {/* SURFACE DE TABLE — une seule ligne SVG dessinée-main, fixe, à 68% de la
+          hauteur de section, largeur 45% centrée. z-index 1 → STRICTEMENT en fond,
+          DERRIÈRE les assets (gobelets z11). La base de chaque asset descend ~20px
+          SOUS la ligne → l'asset masque la ligne à sa base (illusion "posé sur le
+          comptoir"), la ligne reste visible de part et d'autre. */}
+      <svg
+        viewBox="0 0 1440 40"
+        preserveAspectRatio="none"
+        style={{
+          position: "absolute", top: "68%", left: "50%",
+          width: "45%", height: 40, transform: "translate(-50%, -50%)",
+          zIndex: 1, pointerEvents: "none", overflow: "visible",
+        }}
+      >
+        <path
+          d="M0,21 C 110,18 190,23 300,20 C 410,17 520,22 640,20 C 760,18 870,23 980,20 C 1090,17 1210,22 1320,20 C 1380,19 1410,21 1440,20"
+          fill="none" stroke={ink} strokeWidth={1.5} strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
+        />
+      </svg>
+
       {/* TOGGLE À boire / À manger — tout en haut (remplace la navbar) */}
       <div style={{
         position: "absolute", top: "3.5%", left: "50%", transform: "translateX(-50%)",
@@ -252,7 +274,7 @@ export default function MenuCarousel({ onCategoryChange }: { onCategoryChange?: 
         display: "flex", gap: 8, zIndex: 5,
       }}>
         {cats.map((_, i) => (
-          <button key={i} onClick={() => setIdx(i)} style={{
+          <button key={i} onClick={() => { dirRef.current = Math.sign(i - idx); setIdx(i); }} style={{
             width: i === idx ? 28 : 10, height: 10, borderRadius: 999,
             background: i === idx ? ink : "transparent",
             border: `1.5px solid ${ink}`, padding: 0, cursor: "pointer",

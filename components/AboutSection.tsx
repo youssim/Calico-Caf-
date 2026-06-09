@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import MenuCarousel from "./MenuCarousel";
@@ -41,6 +41,28 @@ const PANELS: Panel[] = [
   },
 ];
 
+// ─── Assets dessinés du carrousel (module-scope = stables) ───
+const DRAWN_DEFAULT = "/carousel/gobelet-dessin.png?v=3";
+const DRAWN_DEFAULT_MATTE = "/carousel/gobelet-dessin-matte.png?v=4";
+type Asset = { src: string; matte: string; baseY: number; scale: number; dx?: number; dy?: number };
+// baseY = Y (px canvas 4672) du bas de l'objet ; scale ; dx/dy = décalages px optionnels.
+const ASSETS: Record<string, Asset> = {
+  "White Coffee": { src: "/carousel/white-coffee.png?v=2",   matte: "/carousel/white-coffee-matte.png?v=2", baseY: 3187, scale: 1, dx: 35 },
+  "Cold Drinks":  { src: "/carousel/cold-drinks-noline.png", matte: "/carousel/cold-drinks-matte.png?v=2",  baseY: 3727, scale: 1, dy: 30 },
+  "Cocktail":     { src: "/carousel/cocktail.png?v=2",       matte: "/carousel/cocktail-matte.png?v=2", baseY: 4148, scale: 0.80, dy: 40 },
+  "Not Coffee":   { src: "/carousel/not-coffee.png",         matte: "/carousel/not-coffee-matte.png",   baseY: 3706, scale: 1.30, dy: 50 },
+  "Bière":        { src: "/carousel/biere.png",              matte: "/carousel/biere-matte.png",        baseY: 3706, scale: 1.30, dy: 60 },
+  "Vin":          { src: "/carousel/vin.png?v=2",            matte: "/carousel/vin-matte.png?v=2",      baseY: 3706, scale: 1.12, dy: 50 },
+  "Sweet":        { src: "/carousel/sweet.png?v=3",          matte: "/carousel/sweet-matte.png?v=3",    baseY: 3706, scale: 0.935, dy: 15 },
+};
+const ASSET_URLS = [DRAWN_DEFAULT, DRAWN_DEFAULT_MATTE, ...Object.values(ASSETS).flatMap((a) => [a.src, a.matte])];
+const PXR = H / 4672;
+// translateY pour poser la base de l'objet ~25px sous la ligne (68% de la hauteur viewport).
+const alignY = (baseY: number, scale: number) => {
+  const fromCenter = 0.18 * window.innerHeight + 25;
+  return fromCenter - (baseY - 2336) * PXR * scale;
+};
+
 export default function AboutSection() {
   const sectionRef   = useRef<HTMLDivElement>(null);
   const cup1Ref      = useRef<HTMLImageElement>(null);
@@ -50,15 +72,61 @@ export default function AboutSection() {
   const landingRef   = useRef<HTMLElement>(null);
   const cupWrapRef   = useRef<HTMLDivElement>(null);
   const cupDrawnRef  = useRef<HTMLImageElement>(null);
-  // asset du gobelet dessiné — change selon la catégorie active du carrousel
-  const DRAWN_DEFAULT = "/carousel/gobelet-dessin.png?v=2";
+  const cupMatteRef  = useRef<HTMLImageElement>(null);
+  // calques "fantômes" : montrent l'ANCIEN asset pendant la transition de catégorie
+  // (le primaire swap son src en étant invisible → aucun flash, aucun gap).
+  const ghostDrawnRef = useRef<HTMLImageElement>(null);
+  const ghostMatteRef = useRef<HTMLImageElement>(null);
+  const initRef = useRef(true);
   const [drawnSrc, setDrawnSrc] = useState(DRAWN_DEFAULT);
-  // src + décalage Y par asset → toutes les "lignes de table" alignées (même surface)
-  const ASSETS: Record<string, { src: string; offsetY: number }> = {
-    "White Coffee": { src: "/carousel/white-coffee.png", offsetY: 84 },
-    "Cold Drinks":  { src: "/carousel/cold-drinks.png?v=1", offsetY: -4 },
-    "Cocktail":     { src: "/carousel/cocktail.png", offsetY: -158 },
-  };
+  const [matteSrc, setMatteSrc] = useState(DRAWN_DEFAULT_MATTE);
+
+  // PRÉCHARGE : décode toutes les images au montage → changement de catégorie instantané.
+  useEffect(() => {
+    ASSET_URLS.forEach((u) => { const img = new Image(); img.src = u; img.decode?.().catch(() => {}); });
+  }, []);
+
+  // Changement de catégorie : transition slide+fade avec calque fantôme (anti-flash).
+  // dir = +1 (flèche droite / suivant), -1 (gauche / précédent), 0 (toggle / init).
+  const handleCategory = useCallback((name: string, dir = 0) => {
+    const a = ASSETS[name];
+    const src = a?.src || DRAWN_DEFAULT;
+    const matte = a?.matte || DRAWN_DEFAULT_MATTE;
+    const tx = a?.dx ?? 0;
+    const ty = a ? alignY(a.baseY, a.scale) + (a.dy ?? 0) : 0;
+    const sc = a?.scale ?? 1;
+    const drawn = cupDrawnRef.current, m = cupMatteRef.current;
+    const gd = ghostDrawnRef.current, gm = ghostMatteRef.current;
+    if (!drawn || !m) return;
+
+    // 1er passage (montage) : pose directe, sans animation ni toucher l'opacité
+    // (gérée par le crossfade d'atterrissage).
+    if (initRef.current) {
+      initRef.current = false;
+      setDrawnSrc(src); setMatteSrc(matte);
+      gsap.set([drawn, m], { x: tx, y: ty, scale: sc });
+      return;
+    }
+
+    // position/opacité actuelles → reprises par le fantôme (ancien asset, src lu en DOM)
+    const curX = gsap.getProperty(drawn, "x") as number;
+    const curY = gsap.getProperty(drawn, "y") as number;
+    const curSc = (gsap.getProperty(drawn, "scaleX") as number) || 1;
+    const curOp = gsap.getProperty(drawn, "opacity") as number;
+    if (gd && gm) {
+      gd.src = drawn.src; gm.src = m.src;            // src direct = instantané (pas de state)
+      gsap.killTweensOf([gd, gm]);
+      gsap.set([gd, gm], { x: curX, y: curY, scale: curSc, opacity: curOp });
+    }
+    // primaire = nouvel asset, placé à l'entrée (côté opposé au sens), invisible
+    setDrawnSrc(src); setMatteSrc(matte);
+    const SLIDE = 220 * dir;
+    gsap.killTweensOf([drawn, m]);
+    gsap.set([drawn, m], { x: tx + SLIDE, y: ty, scale: sc, opacity: 0 });
+    // chevauchement : fantôme sort + s'efface, primaire entre + apparaît → pas de gap
+    if (gd && gm) gsap.to([gd, gm], { x: curX - SLIDE, opacity: 0, duration: 0.3, ease: "power2.inOut" });
+    gsap.to([drawn, m], { x: tx, opacity: 1, duration: 0.3, ease: "power2.inOut" });
+  }, []);
 
   useEffect(() => {
     gsap.killTweensOf(cup1Ref.current);
@@ -69,8 +137,9 @@ export default function AboutSection() {
       /* ── GOBELET (seul) — animation de rotation INCHANGÉE, juste retimée
             pour finir droit pile à la zone d'atterrissage ── */
       gsap.set(cup1Ref.current, { xPercent: -50, yPercent: -50, x: HERO_X, y: peekY(), rotation: TILT, opacity: 1 });
-      // Gobelet DESSINÉ : superposé au centre (état final du vrai gobelet), caché au départ
-      gsap.set(cupDrawnRef.current, { xPercent: -50, yPercent: -50, opacity: 0 });
+      // Gobelet DESSINÉ + MATTE (+ fantômes) : superposés au centre, cachés au départ
+      gsap.set([cupDrawnRef.current, cupMatteRef.current, ghostDrawnRef.current, ghostMatteRef.current],
+        { xPercent: -50, yPercent: -50, opacity: 0 });
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -145,10 +214,10 @@ export default function AboutSection() {
         start: "top top",
         onEnter: () => {
           gsap.to(cup1Ref.current, { opacity: 0, duration: 0.6, ease: "power2.inOut" });
-          gsap.to(cupDrawnRef.current, { opacity: 1, duration: 0.6, ease: "power2.inOut" });
+          gsap.to([cupDrawnRef.current, cupMatteRef.current], { opacity: 1, duration: 0.6, ease: "power2.inOut" });
         },
         onLeaveBack: () => {
-          gsap.to(cupDrawnRef.current, { opacity: 0, duration: 0.6, ease: "power2.inOut" });
+          gsap.to([cupDrawnRef.current, cupMatteRef.current], { opacity: 0, duration: 0.6, ease: "power2.inOut" });
           gsap.to(cup1Ref.current, { opacity: 1, duration: 0.6, ease: "power2.inOut" });
         },
       });
@@ -213,11 +282,7 @@ export default function AboutSection() {
       }}>
         {/* Carrousel menu (state-driven, navigation au clic). Le gobelet fixed
             flotte au-dessus (z 11), pointer-events none → les clics passent. */}
-        <MenuCarousel onCategoryChange={(name) => {
-          const a = ASSETS[name];
-          setDrawnSrc(a?.src || DRAWN_DEFAULT);
-          gsap.set(cupDrawnRef.current, { y: a?.offsetY ?? 0 });
-        }} />
+        <MenuCarousel onCategoryChange={handleCategory} />
       </section>
 
       {/* ════════ GOBELET — wrapper fixed plein écran (z 11). Le wrapper gère la
@@ -228,11 +293,28 @@ export default function AboutSection() {
         <img ref={cup1Ref} src="/goblet1.png?v=2" alt="Black Coffee"
           style={{ position: "absolute", top: "50%", left: "50%", height: H, width: "auto", display: "block",
             backfaceVisibility: "hidden" }} />
+        {/* MATTE — silhouette pleine #1a1a1a (= couleur du fond, donc invisible) posée
+            sous les traits ; occulte la ligne de table là où il y a l'asset (la ligne
+            reste visible de part et d'autre). Même position/taille que le gobelet dessiné. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img ref={cupMatteRef} src={matteSrc} alt="" decoding="async"
+          style={{ position: "absolute", top: "50%", left: "50%", height: H, width: "auto", display: "block",
+            backfaceVisibility: "hidden" }} />
+        {/* FANTÔME MATTE — ancien asset pendant la transition (src posé en JS) */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img ref={ghostMatteRef} alt="" decoding="async"
+          style={{ position: "absolute", top: "50%", left: "50%", height: H, width: "auto", display: "block",
+            backfaceVisibility: "hidden", opacity: 0 }} />
         {/* Gobelet DESSINÉ (carrousel) — même position/taille, crossfade au landing */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img ref={cupDrawnRef} src={drawnSrc} alt=""
+        <img ref={cupDrawnRef} src={drawnSrc} alt="" decoding="async"
           style={{ position: "absolute", top: "50%", left: "50%", height: H, width: "auto", display: "block",
             backfaceVisibility: "hidden", filter: "brightness(0) invert(1)" }} />
+        {/* FANTÔME DESSINÉ — ancien asset pendant la transition (src posé en JS) */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img ref={ghostDrawnRef} alt="" decoding="async"
+          style={{ position: "absolute", top: "50%", left: "50%", height: H, width: "auto", display: "block",
+            backfaceVisibility: "hidden", filter: "brightness(0) invert(1)", opacity: 0 }} />
       </div>
     </div>
   );
