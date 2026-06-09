@@ -88,7 +88,7 @@ type Asset = { src: string; matte: string; baseY: number; scale: number; dx?: nu
 // baseY = Y (px canvas 4672) du bas de l'objet ; scale ; dx/dy = décalages px optionnels.
 const ASSETS: Record<string, Asset> = {
   "White Coffee": { src: "/carousel/white-coffee.png?v=2",   matte: "/carousel/white-coffee-matte.png?v=2", baseY: 3187, scale: 1, dx: 35 },
-  "Cold Drinks":  { src: "/carousel/cold-drinks-noline.png", matte: "/carousel/cold-drinks-matte.png?v=2",  baseY: 3727, scale: 1, dy: 30 },
+  "Cold Drinks":  { src: "/carousel/cold-drinks-noline.png?v=2", matte: "/carousel/cold-drinks-matte.png?v=2",  baseY: 3727, scale: 1, dy: 30 },
   "Cocktail":     { src: "/carousel/cocktail.png?v=2",       matte: "/carousel/cocktail-matte.png?v=2", baseY: 4148, scale: 0.80, dy: 40 },
   "Not Coffee":   { src: "/carousel/not-coffee.png",         matte: "/carousel/not-coffee-matte.png",   baseY: 3706, scale: 1.30, dy: 50 },
   "Bière":        { src: "/carousel/biere.png",              matte: "/carousel/biere-matte.png",        baseY: 3706, scale: 1.30, dy: 60 },
