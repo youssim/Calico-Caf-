@@ -166,7 +166,7 @@ export default function MenuCarousel({ onCategoryChange }: { onCategoryChange?: 
           animationDelay: `${(offset + i) * 0.05}s`,
         }}
       >
-        <span>{it.name}</span>
+        <span style={{ textTransform: "uppercase", letterSpacing: "0.03em" }}>{it.name}</span>
         <span style={{ opacity: 0.7, whiteSpace: "nowrap" }}>{it.price}</span>
       </div>
     ));

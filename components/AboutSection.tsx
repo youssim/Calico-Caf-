@@ -337,6 +337,7 @@ export default function AboutSection() {
               color: "#1a1a1a",
               fontSize: "clamp(0.95rem, 1.05vw, 1.1rem)",
               lineHeight: 1.7,
+              textTransform: "uppercase",
             } as React.CSSProperties}>
             {panel.text.body}
           </div>
