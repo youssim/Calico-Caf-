@@ -177,22 +177,42 @@ export default function AboutSection() {
       });
 
       /* ── PAUSE + CARROUSEL : la page noire (= le carrousel menu) est STICKY
-            l'espace d'1 scroll. Le gobelet reste figé centré dessus pendant qu'on
-            navigue le menu au clic (flèches/toggle). À la toute fin, le gobelet
-            s'efface (fondu, il ne bouge pas) en laissant la place au menu suivant. ── */
-      const pinTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: landingRef.current,
-          start: "top top",
-          end: "+=100%",
-          pin: true,
-          pinSpacing: true,
-          anticipatePin: 1,
-          scrub: true,
-        },
+            l'espace d'1 scroll. Le gobelet reste VISIBLE tout le long du carrousel
+            (navigation au clic). Il ne s'efface QUE lorsqu'on quitte le carrousel
+            vers le bas (onLeave), et réapparaît en remontant (onEnterBack) → il ne
+            disparaît jamais tant que le menu est affiché. ── */
+      /* ── SORTIE sans tremblement : pendant le carrousel le gobelet est `fixed`.
+            À la fin du pin (onLeave, scroll vers le bas), on le bascule en
+            `position: absolute` ancré à la position document courante → il défile
+            ALORS EN NATIF avec la page, exactement comme le contenu (zéro transform
+            JS par frame → zéro désync/tremblement, et il reste collé à la ligne).
+            En remontant (onEnterBack), on rebascule en `fixed`. ── */
+      const setCupFixed = () => {
+        const w = cupWrapRef.current; if (!w) return;
+        gsap.set(w, { clearProps: "y" });
+        w.style.position = "fixed";
+        w.style.top = "0px";
+        w.style.bottom = "0px";
+        w.style.height = "";
+      };
+      const setCupAbsolute = () => {
+        const w = cupWrapRef.current; if (!w) return;
+        gsap.set(w, { clearProps: "y" });
+        w.style.position = "absolute";
+        w.style.top = window.scrollY + "px";   // = haut du viewport actuel → reste centré, puis défile
+        w.style.bottom = "auto";
+        w.style.height = "100vh";
+      };
+      ScrollTrigger.create({
+        trigger: landingRef.current,
+        start: "top top",
+        end: "+=100%",
+        pin: true,
+        pinSpacing: true,
+        anticipatePin: 1,
+        onLeave: setCupAbsolute,
+        onEnterBack: setCupFixed,
       });
-      pinTl.to({}, { duration: 0.9 }); // page tenue → navigation carrousel au clic
-      pinTl.to(cupWrapRef.current, { opacity: 0, ease: "power1.in", duration: 0.1 });
 
       /* ── NAVBAR : disparaît quand le carrousel est en vue (le toggle
             À boire/À manger la remplace), réapparaît en remontant. toggleClass
@@ -272,7 +292,7 @@ export default function AboutSection() {
 
       {/* ════════ ATTERRISSAGE NOIR (pinned 100vh = scroll-lock).
             La courbe Taru Bali ci-dessous "dripse" du crème vers le noir au top. ════════ */}
-      <section ref={landingRef} style={{
+      <section ref={landingRef} id="menu" style={{
         position: "relative",
         width: "100%",
         height: "100vh",

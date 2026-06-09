@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 
 const fadeUp = (delay: number) => ({
@@ -19,11 +20,21 @@ function scrollTo(id: string) {
   document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
 }
 
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 // ─── Couleur habillage navbar (liens + tagline + bordure pill + bouton) ───
 // TEST VERT (actuel) · Latte : "#c9b99a" · Noir d'origine : "#1a1a1a"
 const NAV_COLOR = "#4a6741"; // TEST VERT
 
 export default function HeroSection() {
+  // Au rafraîchissement : ne pas restaurer la position de scroll → revenir au héros.
+  useEffect(() => {
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <section style={{
       height: "100vh",
@@ -61,12 +72,13 @@ export default function HeroSection() {
           whiteSpace: "nowrap",
         }}
       >
-        {/* Logo */}
+        {/* Logo — clic = retour au héros */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/calico-logo.png"
           alt="Calico"
-          style={{ height: 67, width: "auto", display: "block" }}
+          onClick={scrollToTop}
+          style={{ height: 67, width: "auto", display: "block", cursor: "pointer" }}
         />
 
         {/* Links */}
