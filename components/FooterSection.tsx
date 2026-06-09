@@ -46,7 +46,7 @@ export default function FooterSection() {
         }}
       >
         <div style={col}>
-          Calico ©2025
+          Calico ©{new Date().getFullYear()}
           <br />
           Tous droits réservés
         </div>
@@ -68,7 +68,7 @@ export default function FooterSection() {
             rel="noreferrer"
             style={{ ...linkUnderline, display: "inline-block", marginTop: 4 }}
           >
-            @calico.lille
+            @calicolille
           </a>
         </div>
 

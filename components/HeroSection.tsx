@@ -204,6 +204,7 @@ export default function HeroSection() {
             fontSize: "clamp(60px, 13vw, 180px)",
             fontWeight: 900,
             lineHeight: 0.85,
+            textTransform: "uppercase",
             color: "var(--black)", // titre héros en noir (cohérence avec la fresque)
             whiteSpace: "nowrap",
             paddingLeft: "1rem",
