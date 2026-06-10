@@ -372,7 +372,7 @@ export default function AboutSection() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img ref={cupMatteRef} src={matteSrc} alt="" decoding="async"
           style={{ position: "absolute", top: "50%", left: "50%", height: H, width: "auto", display: "block",
-            backfaceVisibility: "hidden" }} />
+            backfaceVisibility: "hidden", opacity: 0 }} />
         {/* FANTÔME MATTE — ancien asset pendant la transition (src posé en JS) */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img ref={ghostMatteRef} alt="" decoding="async"
@@ -382,7 +382,7 @@ export default function AboutSection() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img ref={cupDrawnRef} src={drawnSrc} alt="" decoding="async"
           style={{ position: "absolute", top: "50%", left: "50%", height: H, width: "auto", display: "block",
-            backfaceVisibility: "hidden", filter: "brightness(0) invert(1)" }} />
+            backfaceVisibility: "hidden", filter: "brightness(0) invert(1)", opacity: 0 }} />
         {/* FANTÔME DESSINÉ — ancien asset pendant la transition (src posé en JS) */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img ref={ghostDrawnRef} alt="" decoding="async"

@@ -1,4 +1,5 @@
-import Link from "next/link";
+"use client";
+
 import FooterSection from "@/components/FooterSection";
 
 const CREAM = "#f2ede3";
@@ -116,27 +117,36 @@ const SECTIONS: Section[] = [
 ];
 
 export default function MentionsLegales() {
+  // Retour = revenir exactement où on était (le footer d'où on a cliqué), via le
+  // vrai « précédent » du navigateur (bfcache) → identique à la flèche Safari.
+  // Fallback accueil si on a ouvert la page directement (pas d'historique).
+  const goBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) window.history.back();
+    else window.location.href = "/";
+  };
+
   return (
     <main style={{ background: CREAM, color: INK }}>
-      {/* En-tête simple : logo → retour accueil */}
+      {/* En-tête simple : logo → retour (position précédente) */}
       <header style={{ padding: "clamp(24px, 4vw, 48px) clamp(24px, 5vw, 80px)" }}>
-        <Link href="/" aria-label="Retour à l'accueil">
+        <button onClick={goBack} aria-label="Retour" style={{ background: "none", border: "none", padding: 0, cursor: "pointer" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/calico-logo.png" alt="Calico" style={{ height: 56, width: "auto", display: "block" }} />
-        </Link>
+        </button>
       </header>
 
       <div style={{ width: "min(900px, 90vw)", margin: "0 auto", padding: "0 0 clamp(60px, 10vh, 120px)" }}>
-        <Link
-          href="/"
+        <button
+          onClick={goBack}
           style={{
+            background: "none", border: "none", padding: 0, cursor: "pointer",
             fontFamily: "var(--font-courier)", fontSize: 13, letterSpacing: "0.1em",
-            textTransform: "uppercase", color: GREEN, textDecoration: "none",
+            textTransform: "uppercase", color: GREEN,
             borderBottom: `1px solid ${GREEN}55`, paddingBottom: 2,
           }}
         >
-          ← Retour à l'accueil
-        </Link>
+          ← Retour
+        </button>
 
         <h1
           style={{
