@@ -145,8 +145,8 @@ export default function HeroSection() {
         top: -57,
         left: 0,
         right: 0,
-        maskImage: "linear-gradient(to bottom, black 70%, transparent 95%), linear-gradient(to left, black 50%, transparent 56%)",
-        WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 95%), linear-gradient(to left, black 50%, transparent 56%)",
+        maskImage: "linear-gradient(to bottom, black 70%, transparent 95%), linear-gradient(to left, black 44%, transparent 50%)",
+        WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 95%), linear-gradient(to left, black 44%, transparent 50%)",
         maskComposite: "add",
         WebkitMaskComposite: "source-over",
       }}>
@@ -189,7 +189,7 @@ export default function HeroSection() {
         className="hero-tagline"
         style={{
           position: "absolute",
-          bottom: 0,
+          bottom: "2.2vh",
           left: 0,
           right: 0,
           zIndex: 10,
@@ -203,7 +203,7 @@ export default function HeroSection() {
             fontFamily: "var(--font-saira)",
             fontSize: "clamp(60px, 13vw, 180px)",
             fontWeight: 900,
-            lineHeight: 0.85,
+            lineHeight: 0.7,
             textTransform: "uppercase",
             color: "var(--black)", // titre héros en noir (cohérence avec la fresque)
             whiteSpace: "nowrap",
