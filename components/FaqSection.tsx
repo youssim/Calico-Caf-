@@ -16,18 +16,18 @@ const FAQS: Faq[] = [
   },
   {
     id: 2,
-    label: "Brunch",
-    question: "Quels sont les horaires du brunch ?",
+    label: "Horaires",
+    question: "Quels sont les horaires ?",
     answer:
-      "Le brunch est servi tous les jours de 9h à 15h, sans interruption. Pour 4 personnes ou moins, pas besoin de réserver : passez quand vous voulez.",
+      "Ouvert de 8h à 17h tous les jours, sauf le mercredi. La cuisine tourne jusqu'à 16h — et c'est du brunch toute la journée, passez quand vous voulez.",
     imageUrl: "/faq/brunch.jpg",
   },
   {
     id: 3,
     label: "Réserver",
-    question: "Peut-on réserver une table ?",
+    question: "Faut-il réserver ?",
     answer:
-      "Pour les groupes de 5 et plus, réservez par téléphone ou via Instagram. En semaine on garde toujours quelques tables pour le walk-in.",
+      "Non, c'est sans réservation : premier arrivé, premier servi. On trouve (presque) toujours une place, même pour les grandes tablées.",
     imageUrl: "/faq/reserver.jpg",
   },
   {
