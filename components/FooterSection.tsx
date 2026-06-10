@@ -51,11 +51,7 @@ export default function FooterSection() {
           Tous droits réservés
         </div>
 
-        <a
-          href="#"
-          onClick={(e) => e.preventDefault()}
-          style={linkUnderline}
-        >
+        <a href="/mentions-legales" style={linkUnderline}>
           Mentions légales
         </a>
 
@@ -76,6 +72,13 @@ export default function FooterSection() {
           Café de spécialité
           <br />
           Brunch tous les jours · Lille
+        </div>
+
+        <div style={col}>
+          Création du site
+          <br />
+          {/* TODO: rendre cliquable vers le portfolio de Salim quand il existera */}
+          <span style={{ opacity: 1 }}>Salim Youssef</span>
         </div>
       </div>
 
