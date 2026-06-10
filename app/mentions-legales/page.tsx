@@ -24,7 +24,7 @@ const SECTIONS: Section[] = [
         </p>
         <p style={p}>N° TVA intracommunautaire : FR82&nbsp;941&nbsp;826&nbsp;729.</p>
         <p style={p}>Siège social : 25 Boulevard Carnot, 59800 Lille, France.</p>
-        <p style={p}>Directeur·rice de la publication : <strong>[Président·e — à compléter]</strong>.</p>
+        <p style={p}>Directrice de la publication : <strong>Aikerim Amabile</strong> (directrice générale).</p>
         <p style={p}>Contact : <strong>[email — à compléter]</strong>.</p>
       </>
     ),
