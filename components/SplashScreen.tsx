@@ -39,10 +39,23 @@ export default function SplashScreen() {
   }, [show]);
 
   const finish = () => {
-    setFading(true);
+    const v = videoRef.current;
+    // cible = logo CALICO de la navbar (dans le hero, sous le splash)
+    const navLogo = document.querySelector("nav img") as HTMLElement | null;
+    if (v && navLogo) {
+      const vr = v.getBoundingClientRect();
+      const tr = navLogo.getBoundingClientRect();
+      const scale = tr.height / vr.height;
+      const tx = tr.left + tr.width / 2 - (vr.left + vr.width / 2);
+      const ty = tr.top + tr.height / 2 - (vr.top + vr.height / 2);
+      // le logo file vers la navbar en rétrécissant
+      v.style.transition = "transform 0.7s cubic-bezier(0.7, 0, 0.25, 1)";
+      v.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+    }
     document.body.style.overflow = "";
-    // laisse le temps au fondu (600 ms) avant de démonter
-    setTimeout(() => setShow(false), 650);
+    // une fois le logo (presque) arrivé, le crème se lève pour révéler le hero
+    setTimeout(() => setFading(true), 520);
+    setTimeout(() => setShow(false), 900);
   };
 
   if (!show) return null;
@@ -59,7 +72,7 @@ export default function SplashScreen() {
         alignItems: "center",
         justifyContent: "center",
         opacity: fading ? 0 : 1,
-        transition: "opacity 0.6s ease",
+        transition: "opacity 0.38s ease",
         pointerEvents: fading ? "none" : "auto",
       }}
     >
