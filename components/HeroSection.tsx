@@ -24,9 +24,10 @@ function scrollToTop() {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-// ─── Couleur habillage navbar (liens + tagline + bordure pill + bouton) ───
-// TEST VERT (actuel) · Latte : "#c9b99a" · Noir d'origine : "#1a1a1a"
-const NAV_COLOR = "#4a6741"; // TEST VERT
+// ─── Couleur habillage navbar (liens + bordure pill + bouton) ───
+// Hero 100% N&B assumé : encre noire (pas d'accent couleur orphelin sur le hero).
+// Alternatives : Latte "#c9b99a" · Vert "#4a6741"
+const NAV_COLOR = "#1a1a1a"; // ENCRE
 
 export default function HeroSection() {
   // Au rafraîchissement : ne pas restaurer la position de scroll → revenir au héros.
