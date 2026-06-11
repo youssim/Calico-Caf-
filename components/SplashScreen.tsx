@@ -45,6 +45,14 @@ export default function SplashScreen() {
   }, [show]);
 
   const finish = () => {
+    // Refresh → on revient TOUJOURS au hero : on force le haut de page pendant que
+    // le crème couvre encore (le navigateur a pu restaurer le scroll précédent vu
+    // que Next remet scrollRestoration sur "auto"). Le retour des mentions légales,
+    // lui, passe par history.back()/bfcache et NE rejoue PAS le splash → position
+    // conservée, donc ce scrollTo ne le concerne pas.
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    window.scrollTo(0, 0);
+
     // ── Mode "rideau vers le haut" : le panneau crème (avec le logo) glisse hors
     //    de l'écran par le haut → révèle le hero en dessous. ──
     if (EXIT_MODE === "curtain") {
