@@ -71,7 +71,7 @@ export default function SplashScreen() {
         playsInline
         preload="auto"
         style={{
-          width: "min(60vw, 620px)",
+          width: "min(44vw, 460px)",
           height: "auto",
           // `darken` = min(vidéo, crème) par pixel : tout ce qui est plus clair que le
           // crème (fond blanc + bandes de compression) devient EXACTEMENT crème → plus
