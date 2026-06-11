@@ -119,6 +119,14 @@ export default function HeroSection() {
         transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
         onClick={() => scrollTo("#menu")}
         whileHover={{ scale: 1.03 }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = NAV_COLOR;
+          e.currentTarget.style.color = "#f2ede3";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = "transparent";
+          e.currentTarget.style.color = NAV_COLOR;
+        }}
         style={{
           position: "fixed",
           top: 18,
@@ -133,6 +141,7 @@ export default function HeroSection() {
           borderRadius: 50,
           border: `2px solid ${NAV_COLOR}`,
           cursor: "pointer",
+          transition: "background 0.22s ease, color 0.22s ease",
           letterSpacing: "0.05em",
           textTransform: "uppercase",
         }}
