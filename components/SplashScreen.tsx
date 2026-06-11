@@ -4,13 +4,18 @@ import { useEffect, useRef, useState } from "react";
 
 const CREAM = "#f2ede3";
 
+// Animation de sortie du splash : "curtain" (le panneau crème monte et révèle le
+// hero) ou "dock" (le logo CALICO file se caler dans la navbar). On bascule ici.
+const EXIT_MODE: "curtain" | "dock" = "curtain";
+
 // Affiché une fois par session : intro vidéo "CALICO COFFEE DEALER" (logo brush
 // animé, noir sur blanc) centrée sur fond crème. mix-blend-mode:multiply fait
 // disparaître le blanc de la vidéo dans le crème → seul le logo noir reste, sans
 // aucun rectangle visible. Après lecture (~3 s) → fondu vers le hero.
 export default function SplashScreen() {
   const [show, setShow] = useState(false);   // monté ?
-  const [fading, setFading] = useState(false); // en train de disparaître ?
+  const [fading, setFading] = useState(false); // en train de disparaître ? (mode dock)
+  const [exiting, setExiting] = useState(false); // rideau qui monte (mode curtain)
   const videoRef = useRef<HTMLVideoElement>(null);
   const calicoRef = useRef<HTMLImageElement>(null); // logo CALICO seul (docking navbar)
 
@@ -40,6 +45,15 @@ export default function SplashScreen() {
   }, [show]);
 
   const finish = () => {
+    // ── Mode "rideau vers le haut" : le panneau crème (avec le logo) glisse hors
+    //    de l'écran par le haut → révèle le hero en dessous. ──
+    if (EXIT_MODE === "curtain") {
+      document.body.style.overflow = "";
+      setExiting(true);
+      setTimeout(() => setShow(false), 760);
+      return;
+    }
+
     const v = videoRef.current;
     const cal = calicoRef.current;
     // cible = logo CALICO de la navbar (dans le hero, sous le splash)
@@ -82,8 +96,9 @@ export default function SplashScreen() {
         alignItems: "center",
         justifyContent: "center",
         opacity: fading ? 0 : 1,
-        transition: "opacity 0.38s ease",
-        pointerEvents: fading ? "none" : "auto",
+        transform: exiting ? "translateY(-100%)" : "none",
+        transition: "opacity 0.38s ease, transform 0.72s cubic-bezier(0.76, 0, 0.24, 1)",
+        pointerEvents: fading || exiting ? "none" : "auto",
       }}
     >
       <video
