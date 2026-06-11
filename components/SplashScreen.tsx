@@ -65,7 +65,7 @@ export default function SplashScreen() {
     >
       <video
         ref={videoRef}
-        src="/splash-calico.mp4"
+        src="/splash-calico.mp4?v=2"
         autoPlay
         muted
         playsInline
