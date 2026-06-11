@@ -73,8 +73,10 @@ export default function SplashScreen() {
         style={{
           width: "min(60vw, 620px)",
           height: "auto",
-          // le blanc de la vidéo se fond dans le crème, seul le logo noir ressort
-          mixBlendMode: "multiply",
+          // `darken` = min(vidéo, crème) par pixel : tout ce qui est plus clair que le
+          // crème (fond blanc + bandes de compression) devient EXACTEMENT crème → plus
+          // aucun rectangle visible ; seul le noir du logo (plus foncé) ressort.
+          mixBlendMode: "darken",
         }}
       />
     </div>
