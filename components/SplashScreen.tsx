@@ -12,6 +12,7 @@ export default function SplashScreen() {
   const [show, setShow] = useState(false);   // monté ?
   const [fading, setFading] = useState(false); // en train de disparaître ?
   const videoRef = useRef<HTMLVideoElement>(null);
+  const calicoRef = useRef<HTMLImageElement>(null); // logo CALICO seul (docking navbar)
 
   useEffect(() => {
     // accessibilité : si l'utilisateur réduit les animations, on saute l'intro
@@ -40,26 +41,31 @@ export default function SplashScreen() {
 
   const finish = () => {
     const v = videoRef.current;
+    const cal = calicoRef.current;
     // cible = logo CALICO de la navbar (dans le hero, sous le splash)
     const navLogo = document.querySelector("nav img") as HTMLElement | null;
-    if (v && navLogo) {
-      const vr = v.getBoundingClientRect();
-      const tr = navLogo.getBoundingClientRect();
-      const scale = tr.height / vr.height;
-      const tx = tr.left + tr.width / 2 - (vr.left + vr.width / 2);
-      const ty = tr.top + tr.height / 2 - (vr.top + vr.height / 2);
-      // le logo file vers la navbar en rétrécissant ET se dissout en chemin
-      // (on évite de "poser" le lockup CALICO COFFEE DEALER sur la navbar qui ne
-      // dit que CALICO → l'œil suit le mouvement, sans incohérence).
-      v.style.transition =
-        "transform 0.75s cubic-bezier(0.7, 0, 0.25, 1), opacity 0.6s ease 0.1s";
-      v.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+    if (v && cal && navLogo) {
+      // 1) crossfade : le lockup vidéo (CALICO COFFEE DEALER) s'efface, le logo
+      //    CALICO seul (même image que la navbar) apparaît à sa place.
+      v.style.transition = "opacity 0.3s ease";
       v.style.opacity = "0";
+
+      const cr = cal.getBoundingClientRect();
+      const tr = navLogo.getBoundingClientRect();
+      const scale = tr.height / cr.height;
+      const tx = tr.left + tr.width / 2 - (cr.left + cr.width / 2);
+      const ty = tr.top + tr.height / 2 - (cr.top + cr.height / 2);
+      // 2) "CALICO" continue sa route et vient se caler PILE dans la navbar
+      //    (même image → match parfait, le logo du splash devient celui du site).
+      cal.style.transition =
+        "opacity 0.3s ease, transform 0.8s cubic-bezier(0.7, 0, 0.2, 1)";
+      cal.style.opacity = "1";
+      cal.style.transform = `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(${scale})`;
     }
     document.body.style.overflow = "";
-    // le crème se lève pour révéler le hero (le logo a déjà disparu en montant)
-    setTimeout(() => setFading(true), 480);
-    setTimeout(() => setShow(false), 900);
+    // le crème se lève une fois CALICO arrivé dans la navbar → handoff invisible
+    setTimeout(() => setFading(true), 700);
+    setTimeout(() => setShow(false), 1050);
   };
 
   if (!show) return null;
@@ -94,6 +100,23 @@ export default function SplashScreen() {
           // crème (fond blanc + bandes de compression) devient EXACTEMENT crème → plus
           // aucun rectangle visible ; seul le noir du logo (plus foncé) ressort.
           mixBlendMode: "darken",
+        }}
+      />
+      {/* Logo CALICO seul (= image de la navbar) : invisible pendant l'intro, il
+          apparaît en crossfade à la fin et file se caler dans la navbar. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        ref={calicoRef}
+        src="/calico-logo.png"
+        alt=""
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "min(34vw, 360px)",
+          height: "auto",
+          opacity: 0,
         }}
       />
     </div>
