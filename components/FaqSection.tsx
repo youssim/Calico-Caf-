@@ -141,10 +141,14 @@ export default function FaqSection() {
           </a>
         </div>
 
-        {/* ── Droite : accordéon photos ── */}
+        {/* ── Droite : accordéon photos ──
+            Largeur FIGÉE (= 1 carte active + 4 cartes repliées + 4 gaps) pour que
+            le bloc ne varie jamais pendant les transitions de cartes → la colonne
+            de gauche garde un espace constant et le texte ne bouge plus. */}
         <div
           style={{
-            flex: "1 1 520px",
+            flex: "0 0 auto",
+            width: "min(100%, calc(clamp(300px, 30vw, 420px) + 4 * 72px + 4 * 12px))",
             display: "flex",
             flexDirection: "row",
             gap: 12,
