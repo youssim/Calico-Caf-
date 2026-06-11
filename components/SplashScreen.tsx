@@ -6,7 +6,7 @@ const CREAM = "#f2ede3";
 
 // Animation de sortie du splash : "curtain" (le panneau crème monte et révèle le
 // hero) ou "dock" (le logo CALICO file se caler dans la navbar). On bascule ici.
-const EXIT_MODE: "curtain" | "dock" = "curtain";
+const EXIT_MODE: "curtain" | "dock" = "dock";
 
 // Affiché une fois par session : intro vidéo "CALICO COFFEE DEALER" (logo brush
 // animé, noir sur blanc) centrée sur fond crème. mix-blend-mode:multiply fait
