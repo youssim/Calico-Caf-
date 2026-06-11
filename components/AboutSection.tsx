@@ -103,6 +103,40 @@ const alignY = (baseY: number, scale: number) => {
   return fromCenter - (baseY - 2336) * PXR * scale;
 };
 
+// Opacité de départ des mots (texte visible mais atténué avant la révélation).
+const WORD_DIM = 0.18;
+// Découpe le texte d'un conteneur en <span> de mots — en préservant les <span>
+// colorés (vert/terra) et <strong> — pour la révélation d'opacité au scroll.
+// Idempotent (ne re-découpe pas si déjà fait : StrictMode / re-renders).
+function splitWords(root: HTMLElement): HTMLElement[] {
+  if (root.dataset.split === "1") {
+    return Array.from(root.querySelectorAll<HTMLElement>("span.rw"));
+  }
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const textNodes: Text[] = [];
+  let n: Node | null;
+  while ((n = walker.nextNode())) textNodes.push(n as Text);
+  const words: HTMLElement[] = [];
+  textNodes.forEach((node) => {
+    const parent = node.parentNode;
+    if (!parent) return;
+    const frag = document.createDocumentFragment();
+    (node.textContent || "").split(/(\s+)/).forEach((p) => {
+      if (p === "") return;
+      if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(p)); return; }
+      const span = document.createElement("span");
+      span.className = "rw";
+      span.textContent = p;
+      span.style.opacity = String(WORD_DIM);
+      frag.appendChild(span);
+      words.push(span);
+    });
+    parent.replaceChild(frag, node);
+  });
+  root.dataset.split = "1";
+  return words;
+}
+
 export default function AboutSection() {
   const sectionRef   = useRef<HTMLDivElement>(null);
   const cup1Ref      = useRef<HTMLImageElement>(null);
@@ -207,13 +241,27 @@ export default function AboutSection() {
         const card = cardRefs.current[i];
         const text = textRefs.current[i];
         const finalRot = panel.photo.rot;
+        // Carte photo : entrée dynamique (inchangé)
         gsap.set(card, { y: -250, opacity: 0, rotation: finalRot + 8 });
-        gsap.set(text, { opacity: 0, y: 20 });
-        const ptl = gsap.timeline({
-          scrollTrigger: { trigger: panelRefs.current[i], start: "top 60%" },
-        });
-        ptl.to(card, { y: 0, opacity: 1, rotation: finalRot, duration: 0.9, ease: "back.out(1.5)" }, 0);
-        ptl.to(text, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.3);
+        gsap.timeline({ scrollTrigger: { trigger: panelRefs.current[i], start: "top 60%" } })
+          .to(card, { y: 0, opacity: 1, rotation: finalRot, duration: 0.9, ease: "back.out(1.5)" }, 0);
+
+        // Texte : révélation MOT À MOT pilotée par le scroll. Le texte est déjà
+        // visible (atténué) et gagne son opacité au fur et à mesure qu'on descend.
+        if (text) {
+          const words = splitWords(text);
+          gsap.to(words, {
+            opacity: 1,
+            ease: "none",
+            stagger: { each: 0.4 },
+            scrollTrigger: {
+              trigger: text,
+              start: "top 82%",
+              end: "top 30%",
+              scrub: true,
+            },
+          });
+        }
       });
 
       /* ── PAUSE + CARROUSEL : la page noire (= le carrousel menu) est STICKY
