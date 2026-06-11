@@ -48,13 +48,17 @@ export default function SplashScreen() {
       const scale = tr.height / vr.height;
       const tx = tr.left + tr.width / 2 - (vr.left + vr.width / 2);
       const ty = tr.top + tr.height / 2 - (vr.top + vr.height / 2);
-      // le logo file vers la navbar en rétrécissant
-      v.style.transition = "transform 0.7s cubic-bezier(0.7, 0, 0.25, 1)";
+      // le logo file vers la navbar en rétrécissant ET se dissout en chemin
+      // (on évite de "poser" le lockup CALICO COFFEE DEALER sur la navbar qui ne
+      // dit que CALICO → l'œil suit le mouvement, sans incohérence).
+      v.style.transition =
+        "transform 0.75s cubic-bezier(0.7, 0, 0.25, 1), opacity 0.6s ease 0.1s";
       v.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+      v.style.opacity = "0";
     }
     document.body.style.overflow = "";
-    // une fois le logo (presque) arrivé, le crème se lève pour révéler le hero
-    setTimeout(() => setFading(true), 520);
+    // le crème se lève pour révéler le hero (le logo a déjà disparu en montant)
+    setTimeout(() => setFading(true), 480);
     setTimeout(() => setShow(false), 900);
   };
 
