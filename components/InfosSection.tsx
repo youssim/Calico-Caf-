@@ -43,23 +43,44 @@ export default function InfosSection() {
   const [sent, setSent] = useState(false);
 
   return (
-    <section
-      id="infos"
-      style={{
-        minHeight: "100vh",
-        background: CREAM,
-        display: "flex",
-        flexDirection: "column",
-        padding: "11vh 0 8vh",
-        scrollMarginTop: "90px",
-      }}
-    >
-      <div style={{ width: "min(1100px, 90vw)", margin: "0 auto" }}>
-        {/* ───────── HAUT : horaires + adresse ───────── */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "clamp(40px, 6vw, 90px)", alignItems: "flex-start" }}>
+    <section id="infos" style={{ background: CREAM, scrollMarginTop: "90px" }}>
+      {/* ───────── HAUT : horaires + adresse SUR LA DEVANTURE (plein largeur) ───────── */}
+      <div
+        style={{
+          position: "relative",
+          backgroundImage: "url(/devanture.jpg)",
+          backgroundSize: "cover",
+          backgroundPosition: "center 38%",
+          minHeight: "min(82vh, 800px)",
+          display: "flex",
+          alignItems: "flex-end",
+        }}
+      >
+        {/* voile dégradé : sombre en bas pour la lisibilité du texte crème, clair en
+            haut pour laisser respirer l'enseigne CALICO de la vitrine */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background:
+              "linear-gradient(to top, rgba(16,12,9,0.90) 0%, rgba(16,12,9,0.55) 32%, rgba(16,12,9,0.12) 62%, rgba(16,12,9,0.20) 100%)",
+          }}
+        />
+        <div
+          style={{
+            position: "relative",
+            width: "min(1100px, 90vw)",
+            margin: "0 auto",
+            padding: "clamp(40px, 7vh, 80px) 0",
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "clamp(28px, 5vw, 80px)",
+            alignItems: "flex-end",
+          }}
+        >
           <div style={{ flex: "1 1 320px", minWidth: 280 }}>
-            <span style={eyebrow}>Infos</span>
-            <h2 style={h2}>
+            <span style={{ ...eyebrow, color: CREAM, opacity: 0.85 }}>Infos</span>
+            <h2 style={{ ...h2, color: CREAM }}>
               Passez
               <br />
               nous voir.
@@ -67,24 +88,24 @@ export default function InfosSection() {
           </div>
 
           <div style={{ flex: "1 1 240px", minWidth: 220 }}>
-            <div style={label}>Horaires</div>
-            <div style={{ ...value, marginTop: 10 }}>
+            <div style={{ ...label, color: CREAM, opacity: 0.7 }}>Horaires</div>
+            <div style={{ ...value, color: CREAM, marginTop: 10 }}>
               <strong>8h00 – 17h00</strong>
               <br />
               Tous les jours, sauf mercredi
               <br />
-              <span style={{ opacity: 0.6 }}>Cuisine jusqu'à 16h</span>
+              <span style={{ opacity: 0.65 }}>Cuisine jusqu'à 16h</span>
             </div>
           </div>
 
           <div style={{ flex: "1 1 240px", minWidth: 220 }}>
-            <div style={label}>Adresse</div>
-            <div style={{ ...value, marginTop: 10 }}>
+            <div style={{ ...label, color: CREAM, opacity: 0.7 }}>Adresse</div>
+            <div style={{ ...value, color: CREAM, marginTop: 10 }}>
               25 Boulevard Carnot
               <br />
               59800 Lille
               <br />
-              <span style={{ opacity: 0.6 }}>Sans réservation</span>
+              <span style={{ opacity: 0.65 }}>Sans réservation</span>
             </div>
             <a
               href="https://www.google.com/maps/search/?api=1&query=Calico+25+Boulevard+Carnot+Lille"
@@ -93,8 +114,8 @@ export default function InfosSection() {
               style={{
                 display: "inline-block",
                 marginTop: 22,
-                background: GREEN,
-                color: CREAM,
+                background: CREAM,
+                color: INK,
                 fontFamily: "var(--font-courier)",
                 fontSize: 13,
                 fontWeight: 700,
@@ -109,11 +130,16 @@ export default function InfosSection() {
             </a>
           </div>
         </div>
+      </div>
 
-        {/* ───────── séparateur ───────── */}
-        <div style={{ height: 1, background: `${INK}22`, margin: "clamp(40px, 7vh, 80px) 0" }} />
-
-        {/* ───────── BAS : formulaire de contact ───────── */}
+      {/* ───────── BAS : formulaire de contact (sur crème) ───────── */}
+      <div
+        style={{
+          width: "min(1100px, 90vw)",
+          margin: "0 auto",
+          padding: "clamp(54px, 9vh, 110px) 0 clamp(44px, 8vh, 90px)",
+        }}
+      >
         <div style={{ display: "flex", flexWrap: "wrap", gap: "clamp(40px, 6vw, 90px)", alignItems: "flex-start" }}>
           <div style={{ flex: "1 1 320px", minWidth: 280 }}>
             <span style={eyebrow}>Contact</span>
