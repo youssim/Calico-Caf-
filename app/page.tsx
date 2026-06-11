@@ -3,10 +3,12 @@ import AboutSection from "@/components/AboutSection";
 import FaqSection from "@/components/FaqSection";
 import FooterSection from "@/components/FooterSection";
 import InfosSection from "@/components/InfosSection";
+import SplashScreen from "@/components/SplashScreen";
 
 export default function Home() {
   return (
     <main>
+      <SplashScreen />
       <HeroSection />
       <AboutSection />
       <FaqSection />
