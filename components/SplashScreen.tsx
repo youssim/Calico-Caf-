@@ -14,14 +14,11 @@ export default function SplashScreen() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    // une seule fois par session (le flag n'est posé qu'à la FIN de l'intro, pas
-    // ici — sinon le double-montage de React StrictMode en dev empêcherait l'affichage)
-    if (sessionStorage.getItem("calico-splash-seen")) return;
-
     // accessibilité : si l'utilisateur réduit les animations, on saute l'intro
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) { sessionStorage.setItem("calico-splash-seen", "1"); return; }
+    if (reduce) return;
 
+    // affiché à CHAQUE chargement/rafraîchissement de la page
     setShow(true);
     // bloque le scroll pendant l'intro
     document.body.style.overflow = "hidden";
@@ -42,7 +39,6 @@ export default function SplashScreen() {
   }, [show]);
 
   const finish = () => {
-    sessionStorage.setItem("calico-splash-seen", "1");
     setFading(true);
     document.body.style.overflow = "";
     // laisse le temps au fondu (600 ms) avant de démonter
