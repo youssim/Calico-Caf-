@@ -23,14 +23,13 @@ export default function SplashScreen() {
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 
     // ── Retour depuis une autre page (mentions légales) : on restaure la position
-    //    mémorisée (le footer) au lieu de rejouer l'intro / revenir au hero. Détecté
-    //    via le type de navigation "back_forward" + la position sauvegardée au clic.
-    //    Indépendant du bfcache → marche aussi quand le navigateur RECHARGE la page
-    //    (cas du dev). Plusieurs tentatives car ScrollTrigger modifie la hauteur du
-    //    document après coup. ──
-    const navType = (performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined)?.type;
+    //    mémorisée (le footer) au lieu de rejouer l'intro / revenir au hero. La
+    //    PRÉSENCE de la position sauvegardée (posée uniquement au clic du lien footer)
+    //    suffit à savoir qu'on revient — pas besoin de se fier au type de navigation
+    //    (peu fiable selon les navigateurs). Couvre le cas RECHARGEMENT ; le cas
+    //    bfcache (Safari) est géré par le listener `pageshow` plus bas. ──
     const returnY = sessionStorage.getItem("calico-return-y");
-    if (navType === "back_forward" && returnY != null) {
+    if (returnY != null) {
       sessionStorage.removeItem("calico-return-y");
       const y = parseInt(returnY, 10) || 0;
       const restore = () => window.scrollTo(0, y);
@@ -62,6 +61,24 @@ export default function SplashScreen() {
   useEffect(() => {
     if (show) videoRef.current?.play().catch(() => {});
   }, [show]);
+
+  // ── Retour via le bfcache (Safari surtout) : la page est restaurée GELÉE, les
+  //    useEffect ne se relancent pas. `pageshow` avec persisted=true détecte ce cas.
+  //    Si une position de retour est mémorisée (clic mentions légales), on y revient. ──
+  useEffect(() => {
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (!e.persisted) return; // seulement restauration bfcache
+      const y = sessionStorage.getItem("calico-return-y");
+      if (y == null) return;
+      sessionStorage.removeItem("calico-return-y");
+      const yy = parseInt(y, 10) || 0;
+      window.scrollTo(0, yy);
+      requestAnimationFrame(() => window.scrollTo(0, yy));
+      setTimeout(() => window.scrollTo(0, yy), 200);
+    };
+    window.addEventListener("pageshow", onPageShow);
+    return () => window.removeEventListener("pageshow", onPageShow);
+  }, []);
 
   const finish = () => {
     // Refresh → on revient TOUJOURS au hero : on force le haut de page pendant que
