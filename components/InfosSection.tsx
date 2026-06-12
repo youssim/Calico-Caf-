@@ -71,15 +71,15 @@ export default function InfosSection() {
             position: "relative",
             width: "min(1100px, 90vw)",
             margin: "0 auto",
-            padding: "clamp(40px, 7vh, 80px) 0",
+            padding: "clamp(40px, 7vh, 80px) 0 clamp(80px, 14vh, 170px)",
             display: "flex",
             flexWrap: "wrap",
             gap: "clamp(28px, 5vw, 80px)",
-            alignItems: "flex-end",
+            alignItems: "flex-start",
           }}
         >
           <div style={{ flex: "1 1 320px", minWidth: 280 }}>
-            <span style={{ ...eyebrow, color: CREAM, opacity: 0.85 }}>Infos</span>
+            <span style={{ ...eyebrow, color: CREAM, opacity: 0.85, display: "block" }}>Infos</span>
             <h2 style={{ ...h2, color: CREAM }}>
               Passez
               <br />
