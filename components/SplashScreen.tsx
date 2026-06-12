@@ -8,6 +8,17 @@ const CREAM = "#f2ede3";
 // hero) ou "dock" (le logo CALICO file se caler dans la navbar). On bascule ici.
 const EXIT_MODE: "curtain" | "dock" = "dock";
 
+// Saut de scroll INSTANTANÉ (le CSS global a `scroll-behavior: smooth`, qui ferait
+// défiler la page à travers toutes les sections lors d'une restauration de position
+// → glitch visible). On neutralise le smooth le temps du saut.
+function jumpTo(y: number) {
+  const html = document.documentElement;
+  const prev = html.style.scrollBehavior;
+  html.style.scrollBehavior = "auto";
+  window.scrollTo(0, y);
+  html.style.scrollBehavior = prev;
+}
+
 // Affiché une fois par session : intro vidéo "CALICO COFFEE DEALER" (logo brush
 // animé, noir sur blanc) centrée sur fond crème. mix-blend-mode:multiply fait
 // disparaître le blanc de la vidéo dans le crème → seul le logo noir reste, sans
@@ -32,7 +43,7 @@ export default function SplashScreen() {
     if (returnY != null) {
       sessionStorage.removeItem("calico-return-y");
       const y = parseInt(returnY, 10) || 0;
-      const restore = () => window.scrollTo(0, y);
+      const restore = () => jumpTo(y);   // saut INSTANTANÉ (pas de scroll fluide)
       restore();
       requestAnimationFrame(() => { restore(); requestAnimationFrame(restore); });
       const t1 = setTimeout(restore, 250);
@@ -42,12 +53,12 @@ export default function SplashScreen() {
 
     // accessibilité : si l'utilisateur réduit les animations, on saute l'intro (hero en haut)
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) { window.scrollTo(0, 0); return; }
+    if (reduce) { jumpTo(0); return; }
 
     // intro normale (à chaque chargement/rafraîchissement) : hero en haut, on joue
     setShow(true);
     document.body.style.overflow = "hidden";
-    window.scrollTo(0, 0);
+    jumpTo(0);
 
     // lecture pilotée par un timer calé sur la durée de la vidéo (~3,04 s) plutôt
     // que sur l'event onEnded (peu fiable selon les navigateurs).
@@ -72,9 +83,9 @@ export default function SplashScreen() {
       if (y == null) return;
       sessionStorage.removeItem("calico-return-y");
       const yy = parseInt(y, 10) || 0;
-      window.scrollTo(0, yy);
-      requestAnimationFrame(() => window.scrollTo(0, yy));
-      setTimeout(() => window.scrollTo(0, yy), 200);
+      jumpTo(yy);
+      requestAnimationFrame(() => jumpTo(yy));
+      setTimeout(() => jumpTo(yy), 200);
     };
     window.addEventListener("pageshow", onPageShow);
     return () => window.removeEventListener("pageshow", onPageShow);
@@ -87,7 +98,7 @@ export default function SplashScreen() {
     // lui, passe par history.back()/bfcache et NE rejoue PAS le splash → position
     // conservée, donc ce scrollTo ne le concerne pas.
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-    window.scrollTo(0, 0);
+    jumpTo(0);
 
     // ── Mode "rideau vers le haut" : le panneau crème (avec le logo) glisse hors
     //    de l'écran par le haut → révèle le hero en dessous. ──
