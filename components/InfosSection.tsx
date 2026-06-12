@@ -134,10 +134,12 @@ export default function InfosSection() {
 
       {/* ───────── BAS : formulaire de contact (sur crème) ───────── */}
       <div
+        id="contact"
         style={{
           width: "min(1100px, 90vw)",
           margin: "0 auto",
           padding: "clamp(54px, 9vh, 110px) 0 clamp(44px, 8vh, 90px)",
+          scrollMarginTop: "90px",
         }}
       >
         <div style={{ display: "flex", flexWrap: "wrap", gap: "clamp(40px, 6vw, 90px)", alignItems: "flex-start" }}>
@@ -149,7 +151,7 @@ export default function InfosSection() {
               Écrivez-nous.
             </h2>
             <p style={{ ...value, opacity: 0.7, marginTop: 20, maxWidth: 360 }}>
-              On répond vite (et avec le sourire). Pour les groupes de 5+, précisez la date et le nombre.
+              On répond vite (et avec le sourire).
             </p>
           </div>
 

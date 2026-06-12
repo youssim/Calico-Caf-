@@ -283,15 +283,19 @@ export default function AboutSection() {
         w.style.bottom = "0px";
         w.style.height = "";
       };
+      let pinST: ScrollTrigger | undefined;
       const setCupAbsolute = () => {
         const w = cupWrapRef.current; if (!w) return;
         gsap.set(w, { clearProps: "y" });
         w.style.position = "absolute";
-        w.style.top = window.scrollY + "px";   // = haut du viewport actuel → reste centré, puis défile
+        // Ancré à la FIN du pin (sortie du carrousel), pas au scroll courant : ainsi
+        // même si on arrive par un SAUT (restauration de position, ancre), le gobelet
+        // reste à la sortie du carrousel et ne flotte pas sur le contenu plus bas.
+        w.style.top = (pinST ? pinST.end : window.scrollY) + "px";
         w.style.bottom = "auto";
         w.style.height = "100vh";
       };
-      ScrollTrigger.create({
+      pinST = ScrollTrigger.create({
         trigger: landingRef.current,
         start: "top top",
         end: "+=100%",

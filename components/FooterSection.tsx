@@ -51,7 +51,14 @@ export default function FooterSection() {
           Tous droits réservés
         </div>
 
-        <a href="/mentions-legales" style={linkUnderline}>
+        <a
+          href="/mentions-legales"
+          style={linkUnderline}
+          onClick={() => {
+            // mémorise la position pour y revenir au retour (sans dépendre du bfcache)
+            try { sessionStorage.setItem("calico-return-y", String(Math.round(window.scrollY))); } catch {}
+          }}
+        >
           Mentions légales
         </a>
 

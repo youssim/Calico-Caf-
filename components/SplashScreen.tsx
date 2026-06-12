@@ -20,19 +20,38 @@ export default function SplashScreen() {
   const calicoRef = useRef<HTMLImageElement>(null); // logo CALICO seul (docking navbar)
 
   useEffect(() => {
-    // accessibilité : si l'utilisateur réduit les animations, on saute l'intro
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) return;
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 
-    // affiché à CHAQUE chargement/rafraîchissement de la page
+    // ── Retour depuis une autre page (mentions légales) : on restaure la position
+    //    mémorisée (le footer) au lieu de rejouer l'intro / revenir au hero. Détecté
+    //    via le type de navigation "back_forward" + la position sauvegardée au clic.
+    //    Indépendant du bfcache → marche aussi quand le navigateur RECHARGE la page
+    //    (cas du dev). Plusieurs tentatives car ScrollTrigger modifie la hauteur du
+    //    document après coup. ──
+    const navType = (performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined)?.type;
+    const returnY = sessionStorage.getItem("calico-return-y");
+    if (navType === "back_forward" && returnY != null) {
+      sessionStorage.removeItem("calico-return-y");
+      const y = parseInt(returnY, 10) || 0;
+      const restore = () => window.scrollTo(0, y);
+      restore();
+      requestAnimationFrame(() => { restore(); requestAnimationFrame(restore); });
+      const t1 = setTimeout(restore, 250);
+      const t2 = setTimeout(restore, 600);
+      return () => { clearTimeout(t1); clearTimeout(t2); };
+    }
+
+    // accessibilité : si l'utilisateur réduit les animations, on saute l'intro (hero en haut)
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) { window.scrollTo(0, 0); return; }
+
+    // intro normale (à chaque chargement/rafraîchissement) : hero en haut, on joue
     setShow(true);
-    // bloque le scroll pendant l'intro
     document.body.style.overflow = "hidden";
     window.scrollTo(0, 0);
 
     // lecture pilotée par un timer calé sur la durée de la vidéo (~3,04 s) plutôt
-    // que sur l'event onEnded (peu fiable selon les navigateurs) → fermeture
-    // déterministe juste après la fin du logo.
+    // que sur l'event onEnded (peu fiable selon les navigateurs).
     const VIDEO_MS = 3050;
     const close = setTimeout(() => finish(), VIDEO_MS);
     return () => clearTimeout(close);

@@ -117,10 +117,10 @@ export default function FaqSection() {
             on répond vite (et avec le sourire).
           </p>
           <a
-            href="#infos"
+            href="#contact"
             onClick={(e) => {
               e.preventDefault();
-              document.querySelector("#infos")?.scrollIntoView({ behavior: "smooth" });
+              document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" });
             }}
             style={{
               display: "inline-block",

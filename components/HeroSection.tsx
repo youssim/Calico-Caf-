@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { motion } from "framer-motion";
 
 const fadeUp = (delay: number) => ({
@@ -13,7 +12,7 @@ const navLinks = [
   { label: "À propos", href: "#a-propos" },
   { label: "Au menu", href: "#menu" },
   { label: "FAQ", href: "#faq" },
-  { label: "Contact", href: "#infos" },
+  { label: "Contact", href: "#contact" },
 ];
 
 function scrollTo(id: string) {
@@ -30,11 +29,9 @@ function scrollToTop() {
 const NAV_COLOR = "#1a1a1a"; // ENCRE
 
 export default function HeroSection() {
-  // Au rafraîchissement : ne pas restaurer la position de scroll → revenir au héros.
-  useEffect(() => {
-    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-    window.scrollTo(0, 0);
-  }, []);
+  // La gestion du scroll au chargement (hero au refresh / restauration de la position
+  // au retour des mentions légales) est centralisée dans SplashScreen, qui monte
+  // toujours en premier — on évite ainsi que deux effets se battent pour le scroll.
 
   return (
     <section style={{
