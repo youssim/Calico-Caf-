@@ -214,17 +214,24 @@ export default function FaqSection() {
                   {faq.label}
                 </span>
 
-                {/* Contenu (carte déployée) */}
+                {/* Contenu (carte déployée) — largeur FIXE = celle de la carte ouverte,
+                    ancrée en bas à gauche. Le texte est donc toujours mis en page dans
+                    sa forme finale (jamais ré-enroulé pendant l'élargissement) ; il est
+                    simplement clippé par overflow:hidden puis révélé quand la carte
+                    s'ouvre → révélation naturelle, même en navigation rapide. */}
                 <div
                   style={{
                     position: "absolute",
-                    inset: 0,
+                    left: 0,
+                    bottom: 0,
+                    width: "clamp(300px, 30vw, 420px)",
+                    boxSizing: "border-box",
                     padding: 28,
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "flex-end",
                     opacity: isActive ? 1 : 0,
-                    transition: "opacity 0.4s ease 0.15s",
+                    transition: "opacity 0.5s ease",
                     pointerEvents: "none",
                   }}
                 >

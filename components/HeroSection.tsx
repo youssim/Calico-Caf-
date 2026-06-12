@@ -124,7 +124,7 @@ export default function HeroSection() {
           e.currentTarget.style.color = "#f2ede3";
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.background = "transparent";
+          e.currentTarget.style.background = "rgba(242,237,227,0.85)";
           e.currentTarget.style.color = NAV_COLOR;
         }}
         style={{
@@ -132,7 +132,11 @@ export default function HeroSection() {
           top: 18,
           right: "2rem",
           zIndex: 100,
-          background: "transparent",
+          // même pastille crème translucide + flou que la navbar → lisible sur les
+          // fonds sombres (photo devanture, carrousel noir), pas juste un contour
+          background: "rgba(242,237,227,0.85)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
           color: NAV_COLOR,
           fontFamily: "var(--font-courier)",
           fontSize: 13,
