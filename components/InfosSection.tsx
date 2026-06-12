@@ -63,7 +63,7 @@ export default function InfosSection() {
             position: "absolute",
             inset: 0,
             background:
-              "linear-gradient(to top, rgba(16,12,9,0.90) 0%, rgba(16,12,9,0.55) 32%, rgba(16,12,9,0.12) 62%, rgba(16,12,9,0.20) 100%)",
+              "linear-gradient(to top, rgba(14,10,7,0.96) 0%, rgba(14,10,7,0.88) 30%, rgba(14,10,7,0.62) 50%, rgba(14,10,7,0.22) 72%, rgba(14,10,7,0.28) 100%)",
           }}
         />
         <div
