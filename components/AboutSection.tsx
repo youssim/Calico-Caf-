@@ -84,7 +84,7 @@ const PANELS: Panel[] = [
 // ─── Assets dessinés du carrousel (module-scope = stables) ───
 const DRAWN_DEFAULT = "/carousel/gobelet-dessin.png?v=3";
 const DRAWN_DEFAULT_MATTE = "/carousel/gobelet-dessin-matte.png?v=4";
-type Asset = { src: string; matte: string; baseY: number; scale: number; dx?: number; dy?: number };
+type Asset = { src: string; matte: string; baseY: number; scale: number; dx?: number; dy?: number; rot?: number };
 // baseY = Y (px canvas 4672) du bas de l'objet ; scale ; dx/dy = décalages px optionnels.
 const ASSETS: Record<string, Asset> = {
   "White Coffee": { src: "/carousel/white-coffee.png?v=2",   matte: "/carousel/white-coffee-matte.png?v=2", baseY: 3187, scale: 1, dx: 35 },
@@ -93,6 +93,7 @@ const ASSETS: Record<string, Asset> = {
   "Not Coffee":   { src: "/carousel/not-coffee.png",         matte: "/carousel/not-coffee-matte.png",   baseY: 3706, scale: 1.30, dy: 50 },
   "Bière":        { src: "/carousel/biere.png",              matte: "/carousel/biere-matte.png",        baseY: 3706, scale: 1.30, dy: 60 },
   "Vin":          { src: "/carousel/vin.png?v=2",            matte: "/carousel/vin-matte.png?v=2",      baseY: 3706, scale: 1.12, dy: 50 },
+  "Salty":        { src: "/carousel/salty.png?v=4",          matte: "/carousel/salty-matte.png?v=4",    baseY: 3706, scale: 1.122, dx: -40, dy: 15, rot: -3 },
   "Sweet":        { src: "/carousel/sweet.png?v=3",          matte: "/carousel/sweet-matte.png?v=3",    baseY: 3706, scale: 0.935, dy: 15 },
 };
 const ASSET_URLS = [DRAWN_DEFAULT, DRAWN_DEFAULT_MATTE, ...Object.values(ASSETS).flatMap((a) => [a.src, a.matte])];
@@ -169,6 +170,7 @@ export default function AboutSection() {
     const tx = a?.dx ?? 0;
     const ty = a ? alignY(a.baseY, a.scale) + (a.dy ?? 0) : 0;
     const sc = a?.scale ?? 1;
+    const rot = a?.rot ?? 0;
     const drawn = cupDrawnRef.current, m = cupMatteRef.current;
     const gd = ghostDrawnRef.current, gm = ghostMatteRef.current;
     if (!drawn || !m) return;
@@ -178,7 +180,7 @@ export default function AboutSection() {
     if (initRef.current) {
       initRef.current = false;
       setDrawnSrc(src); setMatteSrc(matte);
-      gsap.set([drawn, m], { x: tx, y: ty, scale: sc });
+      gsap.set([drawn, m], { x: tx, y: ty, scale: sc, rotation: rot });
       return;
     }
 
@@ -187,16 +189,17 @@ export default function AboutSection() {
     const curY = gsap.getProperty(drawn, "y") as number;
     const curSc = (gsap.getProperty(drawn, "scaleX") as number) || 1;
     const curOp = gsap.getProperty(drawn, "opacity") as number;
+    const curRot = gsap.getProperty(drawn, "rotation") as number;
     if (gd && gm) {
       gd.src = drawn.src; gm.src = m.src;            // src direct = instantané (pas de state)
       gsap.killTweensOf([gd, gm]);
-      gsap.set([gd, gm], { x: curX, y: curY, scale: curSc, opacity: curOp });
+      gsap.set([gd, gm], { x: curX, y: curY, scale: curSc, rotation: curRot, opacity: curOp });
     }
     // primaire = nouvel asset, placé à l'entrée (côté opposé au sens), invisible
     setDrawnSrc(src); setMatteSrc(matte);
     const SLIDE = 220 * dir;
     gsap.killTweensOf([drawn, m]);
-    gsap.set([drawn, m], { x: tx + SLIDE, y: ty, scale: sc, opacity: 0 });
+    gsap.set([drawn, m], { x: tx + SLIDE, y: ty, scale: sc, rotation: rot, opacity: 0 });
     // chevauchement : fantôme sort + s'efface, primaire entre + apparaît → pas de gap
     if (gd && gm) gsap.to([gd, gm], { x: curX - SLIDE, opacity: 0, duration: 0.3, ease: "power2.inOut" });
     gsap.to([drawn, m], { x: tx, opacity: 1, duration: 0.3, ease: "power2.inOut" });
@@ -412,8 +415,8 @@ export default function AboutSection() {
 
       {/* ════════ GOBELET — wrapper fixed plein écran (z 11). Le wrapper gère la
             SORTIE (translate avec la page noire) ; l'img gère le spin/montée. ════════ */}
-      <div ref={cupWrapRef} style={{ position: "fixed", inset: 0, zIndex: 11, pointerEvents: "none",
-        transform: "translateZ(0)", backfaceVisibility: "hidden" }}>
+      <div ref={cupWrapRef} className="cup-wrap" style={{ position: "fixed", inset: 0, zIndex: 11, pointerEvents: "none",
+        transform: "translateZ(0)", backfaceVisibility: "hidden", transition: "opacity 0.25s ease" }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img ref={cup1Ref} src="/goblet1.png?v=2" alt="Black Coffee"
           style={{ position: "absolute", top: "50%", left: "50%", height: H, width: "auto", display: "block",

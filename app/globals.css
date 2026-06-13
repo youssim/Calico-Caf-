@@ -23,8 +23,14 @@
   padding: 0;
 }
 
-html {
-  scroll-behavior: smooth;
+/* Pas de scroll-behavior:smooth ici : la navigation utilise une animation JS
+   maîtrisée (smoothScrollTo dans HeroSection) pour un défilement plus doux. */
+
+/* Pendant un saut de navigation (clic lien/logo), on masque le gobelet "Spin-Land"
+   le temps du trajet pour qu'il ne flotte pas en travers du hero. Il réapparaît à
+   l'arrivée, déjà dans le bon état. */
+html.cup-hide .cup-wrap {
+  opacity: 0 !important;
 }
 
 body {

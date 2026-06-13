@@ -43,3 +43,6 @@ next-env.d.ts
 # Backups originaux des images (lourds, hors repo)
 public/_originals/
 public/about/_orig_cartes/
+
+# Sauvegardes locales avant optimisation d images (ne pas versionner)
+public/_preopt_backup/

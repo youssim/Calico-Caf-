@@ -15,12 +15,43 @@ const navLinks = [
   { label: "Contact", href: "#contact" },
 ];
 
+// Scroll fluide maîtrisé (durée + easing) plutôt que le smooth natif du navigateur,
+// jugé trop sec. behavior:"instant" à chaque frame pour ne pas entrer en conflit
+// avec le scroll-behavior:smooth global du CSS.
+function smoothScrollTo(targetY: number, duration = 850) {
+  const startY = window.scrollY;
+  const diff = targetY - startY;
+  if (Math.abs(diff) < 2) return;
+  // easeInOutCubic : démarre doux, accélère, ralentit à l'arrivée
+  const ease = (t: number) =>
+    t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  let startTime: number | null = null;
+  // Masque le gobelet "Spin-Land" pendant le trajet : sur un saut de navigation, il
+  // ne doit pas rejouer sa chorégraphie au ralenti à travers le hero. Il réapparaît
+  // à l'arrivée, déjà dans le bon état (piloté par le scroll sous-jacent).
+  const root = document.documentElement;
+  root.classList.add("cup-hide");
+  function step(now: number) {
+    if (startTime === null) startTime = now;
+    const t = Math.min((now - startTime) / duration, 1);
+    window.scrollTo({ top: startY + diff * ease(t), behavior: "instant" });
+    if (t < 1) requestAnimationFrame(step);
+    else root.classList.remove("cup-hide");
+  }
+  requestAnimationFrame(step);
+}
+
+const SCROLL_OFFSET = 80; // marge sous la navbar fixe
+
 function scrollTo(id: string) {
-  document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
+  const el = document.querySelector(id);
+  if (!el) return;
+  const y = el.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET;
+  smoothScrollTo(y);
 }
 
 function scrollToTop() {
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  smoothScrollTo(0);
 }
 
 // ─── Couleur habillage navbar (liens + bordure pill + bouton) ───
@@ -95,12 +126,26 @@ export default function HeroSection() {
                 textTransform: "uppercase",
                 letterSpacing: "0.06em",
                 color: NAV_COLOR,
-                opacity: 0.7,
-                transition: "opacity 0.2s",
+                background: "transparent",
                 padding: 0,
+                borderRadius: 999,
+                opacity: 0.85,
+                // box-shadow = pastille au survol SANS occuper d'espace (pas de
+                // décalage de mise en page → navbar de taille inchangée)
+                transition: "background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.7")}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = NAV_COLOR;
+                e.currentTarget.style.color = "#f2ede3";
+                e.currentTarget.style.opacity = "1";
+                e.currentTarget.style.boxShadow = `0 0 0 7px ${NAV_COLOR}`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = NAV_COLOR;
+                e.currentTarget.style.opacity = "0.85";
+                e.currentTarget.style.boxShadow = "none";
+              }}
             >
               {link.label}
             </button>
@@ -108,47 +153,92 @@ export default function HeroSection() {
         </div>
       </motion.nav>
 
-      {/* CTA VOIR LE MENU — haut droite */}
-      <motion.button
+      {/* CTA HAUT DROITE — Instagram + Nous trouver */}
+      <motion.div
         className="nav-cta"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
-        onClick={() => scrollTo("#menu")}
-        whileHover={{ scale: 1.03 }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = NAV_COLOR;
-          e.currentTarget.style.color = "#f2ede3";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = "rgba(242,237,227,0.85)";
-          e.currentTarget.style.color = NAV_COLOR;
-        }}
         style={{
           position: "fixed",
           top: 18,
           right: "2rem",
           zIndex: 100,
-          // même pastille crème translucide + flou que la navbar → lisible sur les
-          // fonds sombres (photo devanture, carrousel noir), pas juste un contour
-          background: "rgba(242,237,227,0.85)",
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-          color: NAV_COLOR,
-          fontFamily: "var(--font-courier)",
-          fontSize: 13,
-          fontWeight: 700,
-          padding: "14px 28px",
-          borderRadius: 50,
-          border: `2px solid ${NAV_COLOR}`,
-          cursor: "pointer",
-          transition: "background 0.22s ease, color 0.22s ease",
-          letterSpacing: "0.05em",
-          textTransform: "uppercase",
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
         }}
       >
-        Voir le menu
-      </motion.button>
+        {/* Pastille Instagram */}
+        <a
+          href="https://instagram.com/calicolille"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Instagram de Calico"
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = NAV_COLOR;
+            e.currentTarget.style.color = "#f2ede3";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "rgba(242,237,227,0.85)";
+            e.currentTarget.style.color = NAV_COLOR;
+          }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: 46,
+            height: 46,
+            borderRadius: "50%",
+            background: "rgba(242,237,227,0.85)",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            color: NAV_COLOR,
+            border: `2px solid ${NAV_COLOR}`,
+            transition: "background 0.22s ease, color 0.22s ease",
+          }}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+          </svg>
+        </a>
+
+        {/* Nous trouver */}
+        <motion.button
+          onClick={() => scrollTo("#infos")}
+          whileHover={{ scale: 1.03 }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = NAV_COLOR;
+            e.currentTarget.style.color = "#f2ede3";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "rgba(242,237,227,0.85)";
+            e.currentTarget.style.color = NAV_COLOR;
+          }}
+          style={{
+            // même pastille crème translucide + flou que la navbar → lisible sur les
+            // fonds sombres (photo devanture, carrousel noir), pas juste un contour
+            background: "rgba(242,237,227,0.85)",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            color: NAV_COLOR,
+            fontFamily: "var(--font-courier)",
+            fontSize: 13,
+            fontWeight: 700,
+            padding: "14px 28px",
+            borderRadius: 50,
+            border: `2px solid ${NAV_COLOR}`,
+            cursor: "pointer",
+            transition: "background 0.22s ease, color 0.22s ease",
+            letterSpacing: "0.05em",
+            textTransform: "uppercase",
+          }}
+        >
+          Nous trouver
+        </motion.button>
+      </motion.div>
 
       {/* HERO IMAGE — taille naturelle, collée en haut */}
       <div style={{
@@ -176,14 +266,14 @@ export default function HeroSection() {
       {/* Le gobelet est rendu par AboutSection (position fixed, piloté
           par le scroll) pour une continuité pixel-perfect Hero → About. */}
 
-      {/* CAFÉ DE SPÉCIALITÉ — bas droite */}
+      {/* CAFÉ DE SPÉCIALITÉ — haut gauche */}
       <motion.p
         {...fadeUp(0.3)}
         style={{
-          position: "absolute",
-          bottom: "2rem",
-          right: "2rem",
-          zIndex: 10,
+          position: "fixed",
+          top: "30px",
+          left: "2rem",
+          zIndex: 100,
           fontFamily: "var(--font-courier)",
           fontSize: "clamp(11px, 1vw, 14px)",
           letterSpacing: "0.15em",
