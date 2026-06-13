@@ -24,7 +24,10 @@ function jumpTo(y: number) {
 // disparaître le blanc de la vidéo dans le crème → seul le logo noir reste, sans
 // aucun rectangle visible. Après lecture (~3 s) → fondu vers le hero.
 export default function SplashScreen() {
-  const [show, setShow] = useState(false);   // monté ?
+  // `show` démarre à TRUE : le splash crème recouvre la page dès le tout premier
+  // rendu (y compris côté serveur) → aucun flash du hero avant l'intro. Les cas qui
+  // ne veulent pas d'intro (retour mentions, reduce-motion) le masquent dans l'effet.
+  const [show, setShow] = useState(true);    // monté ?
   const [fading, setFading] = useState(false); // en train de disparaître ? (mode dock)
   const [exiting, setExiting] = useState(false); // rideau qui monte (mode curtain)
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -42,6 +45,8 @@ export default function SplashScreen() {
     const returnY = sessionStorage.getItem("calico-return-y");
     if (returnY != null) {
       sessionStorage.removeItem("calico-return-y");
+      setShow(false);                    // pas d'intro au retour
+      document.body.style.overflow = "";
       const y = parseInt(returnY, 10) || 0;
       const restore = () => jumpTo(y);   // saut INSTANTANÉ (pas de scroll fluide)
       restore();
@@ -53,10 +58,9 @@ export default function SplashScreen() {
 
     // accessibilité : si l'utilisateur réduit les animations, on saute l'intro (hero en haut)
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) { jumpTo(0); return; }
+    if (reduce) { setShow(false); document.body.style.overflow = ""; jumpTo(0); return; }
 
     // intro normale (à chaque chargement/rafraîchissement) : hero en haut, on joue
-    setShow(true);
     document.body.style.overflow = "hidden";
     jumpTo(0);
 
