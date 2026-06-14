@@ -1,9 +1,8 @@
 "use client";
 
-// Fiche Google Business de Calico (CID 2504566423498069447, extrait de l'URL Maps).
-// Ouvre directement la fiche où le bouton "Laisser un avis" est accessible.
+// !9m1!1b1 dans l'URL Maps ouvre directement le panel "Laisser un avis".
 const GOOGLE_REVIEW_URL =
-  "https://www.google.com/maps/place/?cid=2504566423498069447";
+  "https://www.google.com/maps/place/Calico+Caf%C3%A9/@50.6386484,3.0653636,17z/data=!3m1!5s0x47c2d588250b28cf:0x12ecac638ffa1491!4m8!3m7!1s0x47c2d58825015205:0x22c201e474f915c7!8m2!3d50.6386484!4d3.0653636!9m1!1b1!16s%2Fg%2F11vsnwg3b8?entry=ttu";
 
 export default function ReviewButton() {
   return (

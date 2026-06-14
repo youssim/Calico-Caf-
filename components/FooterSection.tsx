@@ -66,7 +66,7 @@ export default function FooterSection() {
           Suivez-nous
           <br />
           <a
-            href="https://instagram.com"
+            href="https://instagram.com/calicolille"
             target="_blank"
             rel="noreferrer"
             style={{ ...linkUnderline, display: "inline-block", marginTop: 4 }}

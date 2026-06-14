@@ -338,7 +338,27 @@ export default function AboutSection() {
       });
     }, sectionRef);
 
-    return () => { ctx.revert(); };
+    // Snap "atterrissage menu" : quand on arrive via le lien "Au menu", on force
+    // immédiatement l'état posé (gobelet DESSINÉ visible, gobelet PHOTO masqué) —
+    // le dessiné est déjà à sa position finale, donc aucune fin de Spin-Land visible.
+    const landMenuNow = () => {
+      const drawn = cupDrawnRef.current, mm = cupMatteRef.current, c1 = cup1Ref.current;
+      if (drawn && mm) {
+        gsap.killTweensOf([drawn, mm]);
+        // Style direct = synchrone, pas de batching GSAP → état committé immédiatement
+        drawn.style.opacity = "1";
+        mm.style.opacity = "1";
+        gsap.set([drawn, mm], { opacity: 1 }); // sync GSAP state
+      }
+      if (c1) {
+        gsap.killTweensOf(c1);
+        c1.style.opacity = "0";
+        gsap.set(c1, { opacity: 0 });
+      }
+    };
+    window.addEventListener("calico:land-menu", landMenuNow);
+
+    return () => { window.removeEventListener("calico:land-menu", landMenuNow); ctx.revert(); };
   }, []);
 
   return (
@@ -416,7 +436,7 @@ export default function AboutSection() {
       {/* ════════ GOBELET — wrapper fixed plein écran (z 11). Le wrapper gère la
             SORTIE (translate avec la page noire) ; l'img gère le spin/montée. ════════ */}
       <div ref={cupWrapRef} className="cup-wrap" style={{ position: "fixed", inset: 0, zIndex: 11, pointerEvents: "none",
-        transform: "translateZ(0)", backfaceVisibility: "hidden", transition: "opacity 0.25s ease" }}>
+        transform: "translateZ(0)", backfaceVisibility: "hidden", transition: "none" }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img ref={cup1Ref} src="/goblet1.png?v=2" alt="Black Coffee"
           style={{ position: "absolute", top: "50%", left: "50%", height: H, width: "auto", display: "block",

@@ -18,23 +18,24 @@ const navLinks = [
 // Scroll fluide maîtrisé (durée + easing) plutôt que le smooth natif du navigateur,
 // jugé trop sec. behavior:"instant" à chaque frame pour ne pas entrer en conflit
 // avec le scroll-behavior:smooth global du CSS.
-function smoothScrollTo(targetY: number, duration = 850) {
+function smoothScrollTo(targetY: number, onArrive?: () => void, duration = 850) {
   const startY = window.scrollY;
   const diff = targetY - startY;
-  if (Math.abs(diff) < 2) return;
+  if (Math.abs(diff) < 2) { onArrive?.(); return; }
   // easeInOutCubic : démarre doux, accélère, ralentit à l'arrivée
   const ease = (t: number) =>
     t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
   let startTime: number | null = null;
-  // Masque le gobelet "Spin-Land" pendant le trajet : sur un saut de navigation, il
-  // ne doit pas rejouer sa chorégraphie au ralenti à travers le hero. Il réapparaît
-  // à l'arrivée, déjà dans le bon état (piloté par le scroll sous-jacent).
+  let arrivedFired = false;
   const root = document.documentElement;
   root.classList.add("cup-hide");
   function step(now: number) {
     if (startTime === null) startTime = now;
     const t = Math.min((now - startTime) / duration, 1);
     window.scrollTo({ top: startY + diff * ease(t), behavior: "instant" });
+    // Snap le gobelet dans son état final 2 frames avant la fin : on donne à GSAP
+    // le temps de committer les styles inline avant qu'on retire cup-hide.
+    if (!arrivedFired && t >= 0.95) { arrivedFired = true; onArrive?.(); }
     if (t < 1) requestAnimationFrame(step);
     else root.classList.remove("cup-hide");
   }
@@ -46,8 +47,15 @@ const SCROLL_OFFSET = 80; // marge sous la navbar fixe
 function scrollTo(id: string) {
   const el = document.querySelector(id);
   if (!el) return;
-  const y = el.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET;
-  smoothScrollTo(y);
+  // #menu = carrousel épinglé : viser PILE le haut de la section (début du pin =
+  // gobelet droit, atterrissage terminé), +8px pour être franchement dans le pin.
+  // Pas de marge navbar ici (la nav se masque quand le carrousel est en vue).
+  const adjust = id === "#menu" ? 8 : -SCROLL_OFFSET;
+  const y = el.getBoundingClientRect().top + window.scrollY + adjust;
+  // Pour le menu : à l'arrivée, on signale au carrousel de "snapper" le gobelet
+  // dans son état posé (dessin visible, photo masquée) → pas de fin de Spin-Land.
+  const onArrive = id === "#menu" ? () => window.dispatchEvent(new Event("calico:land-menu")) : undefined;
+  smoothScrollTo(y, onArrive);
 }
 
 function scrollToTop() {
@@ -207,7 +215,7 @@ export default function HeroSection() {
 
         {/* Nous trouver */}
         <motion.button
-          onClick={() => scrollTo("#infos")}
+          onClick={() => window.open("https://www.google.com/maps/dir/?api=1&destination=50.6386484,3.0653636", "_blank")}
           whileHover={{ scale: 1.03 }}
           onMouseEnter={(e) => {
             e.currentTarget.style.background = NAV_COLOR;
