@@ -418,8 +418,7 @@ export default function AboutSection() {
         </section>
       ))}
 
-      {/* ════════ ATTERRISSAGE NOIR (pinned 100vh = scroll-lock).
-            La courbe Taru Bali ci-dessous "dripse" du crème vers le noir au top. ════════ */}
+      {/* ════════ ATTERRISSAGE NOIR (pinned 100vh = scroll-lock). ════════ */}
       <section ref={landingRef} id="menu" style={{
         position: "relative",
         width: "100%",
@@ -428,10 +427,41 @@ export default function AboutSection() {
         margin: 0,
         overflow: "hidden",
       }}>
-        {/* Carrousel menu (state-driven, navigation au clic). Le gobelet fixed
-            flotte au-dessus (z 11), pointer-events none → les clics passent. */}
         <MenuCarousel onCategoryChange={handleCategory} />
       </section>
+
+      {/* ══ BANDELETTE — ruban crème incliné entre le noir et le crème ══ */}
+      <div style={{ position: "relative", background: "#1a1a1a", height: 80, overflow: "visible", zIndex: 3 }}>
+        <div style={{
+          position: "absolute",
+          left: "-5%",
+          right: "-5%",
+          top: "50%",
+          transform: "translateY(-50%) rotate(-2deg)",
+          background: "#f2ede3",
+          padding: "14px 0",
+          display: "flex",
+          alignItems: "center",
+          overflow: "hidden",
+          boxShadow: "0 4px 24px rgba(0,0,0,0.35)",
+        }}>
+          <p style={{
+            fontFamily: "var(--font-saira)",
+            fontWeight: 900,
+            fontSize: "clamp(14px, 1.4vw, 20px)",
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            color: "#1a1a1a",
+            whiteSpace: "nowrap",
+            margin: 0,
+            padding: "0 2rem",
+          }}>
+            {Array.from({ length: 20 }).map((_, i) => (
+              <span key={i}>DARK COFFEE DEALER &nbsp;•&nbsp; </span>
+            ))}
+          </p>
+        </div>
+      </div>
 
       {/* ════════ GOBELET — wrapper fixed plein écran (z 11). Le wrapper gère la
             SORTIE (translate avec la page noire) ; l'img gère le spin/montée. ════════ */}
