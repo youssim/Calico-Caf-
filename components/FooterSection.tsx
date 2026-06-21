@@ -40,7 +40,7 @@ export default function FooterSection() {
           zIndex: 2,
           display: "flex",
           flexWrap: "wrap",
-          gap: "clamp(32px, 6vw, 90px)",
+          gap: "clamp(48px, 8vw, 140px)",
           justifyContent: "center",
           alignItems: "flex-start",
         }}
