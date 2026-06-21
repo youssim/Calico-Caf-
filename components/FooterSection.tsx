@@ -41,7 +41,7 @@ export default function FooterSection() {
           display: "flex",
           flexWrap: "wrap",
           gap: "clamp(32px, 6vw, 90px)",
-          justifyContent: "space-between",
+          justifyContent: "center",
           alignItems: "flex-start",
         }}
       >
@@ -81,8 +81,6 @@ export default function FooterSection() {
           Brunch tous les jours · Lille
         </div>
 
-        <div style={col}>
-        </div>
       </div>
 
       {/* ── Wordmark géant CALICO (logo brush crème, déborde en bas) ── */}
