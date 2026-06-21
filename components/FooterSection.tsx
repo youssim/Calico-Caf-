@@ -82,10 +82,6 @@ export default function FooterSection() {
         </div>
 
         <div style={col}>
-          Création du site
-          <br />
-          {/* TODO: rendre cliquable vers le portfolio de Salim quand il existera */}
-          <span style={{ opacity: 1 }}>Salim Youssef</span>
         </div>
       </div>
 
