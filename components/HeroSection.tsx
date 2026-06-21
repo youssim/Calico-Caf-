@@ -2,10 +2,11 @@
 
 import { motion } from "framer-motion";
 
-const fadeUp = (delay: number) => ({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const fadeUp = (delay: number): any => ({
   initial: { opacity: 0, y: 30 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94], delay },
+  transition: { duration: 0.7, ease: "easeOut", delay },
 });
 
 const navLinks = [
@@ -125,7 +126,7 @@ export default function HeroSection() {
               key={link.href}
               onClick={() => scrollTo(link.href)}
               style={{
-                background: "none",
+                background: "transparent",
                 border: "none",
                 cursor: "pointer",
                 fontFamily: "var(--font-courier)",
@@ -134,7 +135,6 @@ export default function HeroSection() {
                 textTransform: "uppercase",
                 letterSpacing: "0.06em",
                 color: NAV_COLOR,
-                background: "transparent",
                 padding: 0,
                 borderRadius: 999,
                 opacity: 0.85,

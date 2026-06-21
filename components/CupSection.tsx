@@ -136,7 +136,7 @@ export default function CupSection() {
             width: "clamp(320px, 38vw, 560px)",
             height: "auto",
             display: "block",
-            imageRendering: "high-quality",
+            imageRendering: "auto",
             filter: "drop-shadow(0px 40px 80px rgba(0,0,0,0.22))",
           }}
         />
