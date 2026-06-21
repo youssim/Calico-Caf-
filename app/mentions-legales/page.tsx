@@ -109,8 +109,7 @@ const SECTIONS: Section[] = [
     title: "Création du site",
     body: (
       <p style={p}>
-        {/* TODO: rendre cliquable vers le portfolio quand il existera */}
-        Conception &amp; développement : <strong>Salim Youssef</strong>.
+        Conception &amp; développement : site réalisé sur mesure.
       </p>
     ),
   },
