@@ -32,6 +32,7 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: "Calico — Café de spécialité, Lille",
   description: "Brunch tous les jours. Café de spécialité. 25 Bd Carnot, Lille.",
+  icons: { icon: "/favicon.png" },
 };
 
 export default function RootLayout({
