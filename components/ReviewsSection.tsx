@@ -55,11 +55,11 @@ const REVIEWS: Review[] = [
   },
 ];
 
-function Stars({ n }: { n: number }) {
+function Stars({ n, size = 16 }: { n: number; size?: number }) {
   return (
-    <span style={{ display: "inline-flex", gap: 1 }} aria-label={`${n} étoiles sur 5`}>
+    <span style={{ display: "inline-flex", gap: 2 }} aria-label={`${n} étoiles sur 5`}>
       {Array.from({ length: 5 }).map((_, i) => (
-        <svg key={i} width="13" height="13" viewBox="0 0 24 24"
+        <svg key={i} width={size} height={size} viewBox="0 0 24 24"
           fill={i < n ? GREEN : "none"} stroke={GREEN} strokeWidth={i < n ? 0 : 1.5} aria-hidden>
           <path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14l-5-4.87 7.1-1.01L12 2z" />
         </svg>
@@ -126,11 +126,10 @@ export default function ReviewsSection() {
               letterSpacing: "0.08em",
               textTransform: "uppercase",
               color: INK,
-              opacity: 0.75,
             }}
           >
             <Stars n={5} />
-            <span>5,0 sur Google</span>
+            <span style={{ opacity: 0.75 }}>5,0 sur Google</span>
           </div>
 
           <a
@@ -178,12 +177,11 @@ export default function ReviewsSection() {
                   letterSpacing: "0.08em",
                   textTransform: "uppercase",
                   color: INK,
-                  opacity: 0.7,
                 }}
               >
-                <Stars n={r.stars} />
-                <span>{r.when}</span>
-                <span style={{ fontWeight: 700, opacity: 1 }}>· {r.name}</span>
+                <Stars n={r.stars} size={15} />
+                <span style={{ opacity: 0.6 }}>{r.when}</span>
+                <span style={{ fontWeight: 700, opacity: 0.85 }}>· {r.name}</span>
               </div>
 
               {/* titre de l'avis */}
