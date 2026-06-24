@@ -13,8 +13,8 @@ export default function Home() {
       <SplashScreen />
       <HeroSection />
       <AboutSection />
-      <FaqSection />
       <ReviewsSection />
+      <FaqSection />
       <InfosSection />
       <QuoteSection />
       <FooterSection />
