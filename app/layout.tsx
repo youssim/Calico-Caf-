@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Saira_Extra_Condensed, Courier_Prime, Playfair_Display, DM_Sans } from "next/font/google";
 import "./globals.css";
+import "lenis/dist/lenis.css";
 import ReviewButton from "@/components/ReviewButton";
+import SmoothScroll from "@/components/SmoothScroll";
 
 const saira = Saira_Extra_Condensed({
   variable: "--font-saira",
@@ -42,6 +44,7 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${saira.variable} ${courier.variable} ${playfair.variable} ${dmSans.variable} h-full`}>
       <body className="min-h-full">
+        <SmoothScroll />
         {children}
         <ReviewButton />
       </body>

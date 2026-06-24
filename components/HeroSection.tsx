@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { lenisRef } from "@/lib/lenis";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const fadeUp = (delay: number): any => ({
@@ -30,6 +31,9 @@ function smoothScrollTo(targetY: number, onArrive?: () => void, duration = 850) 
   let arrivedFired = false;
   const root = document.documentElement;
   root.classList.add("cup-hide");
+  // Met Lenis en pause pendant l'animation custom : sinon son inertie écraserait
+  // nos window.scrollTo frame par frame et le gobelet ne se poserait pas net.
+  lenisRef.current?.stop();
   function step(now: number) {
     if (startTime === null) startTime = now;
     const t = Math.min((now - startTime) / duration, 1);
@@ -38,7 +42,7 @@ function smoothScrollTo(targetY: number, onArrive?: () => void, duration = 850) 
     // le temps de committer les styles inline avant qu'on retire cup-hide.
     if (!arrivedFired && t >= 0.95) { arrivedFired = true; onArrive?.(); }
     if (t < 1) requestAnimationFrame(step);
-    else root.classList.remove("cup-hide");
+    else { root.classList.remove("cup-hide"); lenisRef.current?.start(); }
   }
   requestAnimationFrame(step);
 }
