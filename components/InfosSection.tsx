@@ -7,6 +7,12 @@ const INK = "#1a1a1a";
 const GREEN = "#4a6741";
 const TERRA = "#d45a30";
 
+// ⚠️ À REMPLACER quand on a l'email du café :
+// 1. Aller sur https://web3forms.com → entrer l'email de Calico → recevoir une clé gratuite
+// 2. Coller la clé ici. Les messages du formulaire arriveront direct sur leur boîte mail.
+// Tant que c'est le placeholder, le formulaire affiche "merci" sans rien envoyer (sûr pour la démo).
+const WEB3FORMS_ACCESS_KEY = "REMPLACER_PAR_LA_CLE";
+
 const eyebrow: React.CSSProperties = {
   fontFamily: "var(--font-courier)",
   fontSize: 13,
@@ -41,6 +47,40 @@ const value: React.CSSProperties = {
 
 export default function InfosSection() {
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError(false);
+
+    // Pas encore de clé (avant d'avoir l'email du café) → on simule l'envoi pour la démo.
+    if (WEB3FORMS_ACCESS_KEY === "REMPLACER_PAR_LA_CLE") {
+      setSent(true);
+      return;
+    }
+
+    setSending(true);
+    try {
+      const form = e.currentTarget;
+      const data = new FormData(form);
+      data.append("access_key", WEB3FORMS_ACCESS_KEY);
+      data.append("subject", "Nouveau message depuis le site Calico");
+      data.append("from_name", "Site Calico");
+
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: data,
+      });
+      const json = await res.json();
+      if (json.success) setSent(true);
+      else setError(true);
+    } catch {
+      setError(true);
+    } finally {
+      setSending(false);
+    }
+  }
 
   return (
     <section id="infos" style={{ background: CREAM, scrollMarginTop: "90px" }}>
@@ -162,14 +202,20 @@ export default function InfosSection() {
               </div>
             ) : (
               <form
-                onSubmit={(e) => { e.preventDefault(); setSent(true); }}
+                onSubmit={handleSubmit}
                 style={{ display: "flex", flexDirection: "column", gap: 16 }}
               >
                 <Field label="Nom" name="nom" type="text" />
                 <Field label="Email" name="email" type="email" />
                 <Field label="Message" name="message" textarea />
+                {error && (
+                  <p style={{ ...value, color: TERRA, fontSize: "0.9rem", margin: 0 }}>
+                    Oups, l'envoi a échoué. Réessayez ou écrivez-nous directement par mail.
+                  </p>
+                )}
                 <button
                   type="submit"
+                  disabled={sending}
                   style={{
                     alignSelf: "flex-start",
                     marginTop: 6,
@@ -183,10 +229,11 @@ export default function InfosSection() {
                     padding: "16px 38px",
                     borderRadius: 50,
                     border: "none",
-                    cursor: "pointer",
+                    cursor: sending ? "wait" : "pointer",
+                    opacity: sending ? 0.6 : 1,
                   }}
                 >
-                  Envoyer
+                  {sending ? "Envoi…" : "Envoyer"}
                 </button>
               </form>
             )}
