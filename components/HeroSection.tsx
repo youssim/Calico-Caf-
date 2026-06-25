@@ -1,7 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { lenisRef } from "@/lib/lenis";
+gsap.registerPlugin(ScrollTrigger);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const fadeUp = (delay: number): any => ({
@@ -41,6 +44,7 @@ function smoothScrollTo(targetY: number, onArrive?: () => void, duration = 850) 
     // Snap le gobelet dans son état final 2 frames avant la fin : on donne à GSAP
     // le temps de committer les styles inline avant qu'on retire cup-hide.
     if (!arrivedFired && t >= 0.95) { arrivedFired = true; onArrive?.(); }
+    ScrollTrigger.update();
     if (t < 1) requestAnimationFrame(step);
     else { root.classList.remove("cup-hide"); lenisRef.current?.start(); }
   }
