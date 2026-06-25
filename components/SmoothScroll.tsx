@@ -22,7 +22,14 @@ export default function SmoothScroll() {
     lenisRef.current = lenis;
 
     lenis.on("scroll", ScrollTrigger.update);
-    const onTick = (time: number) => lenis.raf(time * 1000);
+    const onTick = (time: number) => {
+      lenis.raf(time * 1000);
+      // On force ScrollTrigger à se mettre à jour à CHAQUE frame (pas seulement sur
+      // l'event "scroll" de Lenis). Sinon, le scrub:0.7 du gobelet a besoin de ~0.7s
+      // de frames supplémentaires pour rattraper après un arrêt/saut : si Lenis a
+      // cessé d'émettre, le rattrapage ne se termine jamais → le gobelet reste figé.
+      ScrollTrigger.update();
+    };
     gsap.ticker.add(onTick);
     gsap.ticker.lagSmoothing(0);
 

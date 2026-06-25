@@ -1,10 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { lenisRef } from "@/lib/lenis";
-gsap.registerPlugin(ScrollTrigger);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const fadeUp = (delay: number): any => ({
@@ -20,35 +17,38 @@ const navLinks = [
   { label: "Contact", href: "#contact" },
 ];
 
-// Scroll fluide maîtrisé (durée + easing) plutôt que le smooth natif du navigateur,
-// jugé trop sec. behavior:"instant" à chaque frame pour ne pas entrer en conflit
-// avec le scroll-behavior:smooth global du CSS.
-function smoothScrollTo(targetY: number, onArrive?: () => void, duration = 850) {
-  const startY = window.scrollY;
-  const diff = targetY - startY;
-  if (Math.abs(diff) < 2) { onArrive?.(); return; }
+// Scroll fluide maîtrisé (durée + easing). On délègue le mouvement à Lenis lui-même
+// (`lenis.scrollTo`) au lieu de piloter window.scrollTo frame par frame : ainsi la
+// position interne de Lenis reste synchronisée, il émet son event "scroll" à chaque
+// frame, et le scrub:0.7 du gobelet (Spin-Land) suit ET se stabilise proprement à
+// l'arrivée — plus de gobelet figé en plein spin après un clic navbar.
+function smoothScrollTo(targetY: number, onArrive?: () => void, duration = 0.9) {
+  const root = document.documentElement;
   // easeInOutCubic : démarre doux, accélère, ralentit à l'arrivée
   const ease = (t: number) =>
     t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-  let startTime: number | null = null;
-  let arrivedFired = false;
-  const root = document.documentElement;
+  // Masque le gobelet le temps du trajet (on ne veut pas le voir tourner en route),
+  // puis on le révèle dans son état final une fois Lenis arrivé.
   root.classList.add("cup-hide");
-  // Met Lenis en pause pendant l'animation custom : sinon son inertie écraserait
-  // nos window.scrollTo frame par frame et le gobelet ne se poserait pas net.
-  lenisRef.current?.stop();
-  function step(now: number) {
-    if (startTime === null) startTime = now;
-    const t = Math.min((now - startTime) / duration, 1);
-    window.scrollTo({ top: startY + diff * ease(t), behavior: "instant" });
-    // Snap le gobelet dans son état final 2 frames avant la fin : on donne à GSAP
-    // le temps de committer les styles inline avant qu'on retire cup-hide.
-    if (!arrivedFired && t >= 0.95) { arrivedFired = true; onArrive?.(); }
-    ScrollTrigger.update();
-    if (t < 1) requestAnimationFrame(step);
-    else { root.classList.remove("cup-hide"); lenisRef.current?.start(); }
+
+  const finish = () => {
+    onArrive?.();              // ex. snap "atterrissage menu" (synchrone)
+    root.classList.remove("cup-hide");
+  };
+
+  const lenis = lenisRef.current;
+  if (!lenis) {
+    window.scrollTo({ top: targetY, behavior: "auto" });
+    finish();
+    return;
   }
-  requestAnimationFrame(step);
+
+  lenis.scrollTo(targetY, {
+    duration,
+    easing: ease,
+    force: true,        // autorise le scroll même si un autre est en cours
+    onComplete: finish,
+  });
 }
 
 const SCROLL_OFFSET = 80; // marge sous la navbar fixe
