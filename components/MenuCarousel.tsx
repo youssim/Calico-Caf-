@@ -215,8 +215,8 @@ export default function MenuCarousel({ onCategoryChange }: { onCategoryChange?: 
         position: "absolute", top: "3.5%", left: "50%", transform: "translateX(-50%)",
         display: "flex", gap: 12, zIndex: 6,
       }}>
-        <button style={toggleBtn("boire")} onClick={() => switchGroup("boire")}>À boire</button>
-        <button style={toggleBtn("manger")} onClick={() => switchGroup("manger")}>À manger</button>
+        <button className="mc-toggle" style={toggleBtn("boire")} onClick={() => switchGroup("boire")}>À boire</button>
+        <button className="mc-toggle" style={toggleBtn("manger")} onClick={() => switchGroup("manger")}>À manger</button>
       </div>
 
       {/* NOM DE CATÉGORIE */}
@@ -248,7 +248,7 @@ export default function MenuCarousel({ onCategoryChange }: { onCategoryChange?: 
 
       {/* EXTRAS (si présents) — bas, sous les dots */}
       {cat.extras && (
-        <div key={`extras-${animKey}`} className="mc-item" style={{
+        <div key={`extras-${animKey}`} className="mc-item mc-extras" style={{
           position: "absolute", bottom: "13%", left: "50%", transform: "translateX(-50%)",
           width: "min(80vw, 760px)", textAlign: "center",
           fontFamily: "var(--font-courier)", fontSize: "clamp(10px, 0.85vw, 12px)",
@@ -273,17 +273,17 @@ export default function MenuCarousel({ onCategoryChange }: { onCategoryChange?: 
       )}
 
       {/* FLÈCHES — proches du gobelet (≈80px de ses bords), centrées verticalement */}
-      <div className="mc-arrow" onClick={prev} style={{
+      <div className="mc-arrow mc-arrow-left" onClick={prev} style={{
         position: "absolute", top: "50%", left: "calc(50% - 320px)", transform: "translate(-50%, -50%)",
         fontSize: 40, color: ink, zIndex: 5, userSelect: "none", lineHeight: 1,
       }}>←</div>
-      <div className="mc-arrow" onClick={next} style={{
+      <div className="mc-arrow mc-arrow-right" onClick={next} style={{
         position: "absolute", top: "50%", left: "calc(50% + 320px)", transform: "translate(-50%, -50%)",
         fontSize: 40, color: ink, zIndex: 5, userSelect: "none", lineHeight: 1,
       }}>→</div>
 
       {/* DOTS */}
-      <div style={{
+      <div className="mc-dots" style={{
         position: "absolute", bottom: "6%", left: "50%", transform: "translateX(-50%)",
         display: "flex", gap: 8, zIndex: 5,
       }}>

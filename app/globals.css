@@ -113,4 +113,50 @@ nav, .nav-cta { transition: opacity 0.4s ease; }
     transform: rotate(-4deg) !important;
     z-index: 1 !important;
   }
+
+  /* ═══ Carrousel menu ═══ */
+  /* boutons À boire / À manger : ~50% plus petits */
+  .mc-toggle {
+    padding: 6px 15px !important;
+    font-size: 0.8rem !important;
+  }
+  /* titre de catégorie : le clamp force 5rem mini sur desktop → trop gros ici */
+  .mc-name {
+    font-size: 2.5rem !important;
+    top: 10.5% !important;
+  }
+  /* lignes du menu (espresso, double…) : plus compactes */
+  .mc-item {
+    font-size: 0.82rem !important;
+    line-height: 1.85 !important;
+  }
+  /* flèches : ramenées AUX BORDS de l'écran (avant elles étaient à 320px du
+     centre = hors écran sur mobile) + pastille pour être bien visibles/cliquables */
+  .mc-arrow {
+    font-size: 26px !important;
+    width: 42px; height: 42px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: rgba(242,237,227,0.14);
+  }
+  .mc-arrow-left {
+    left: 2vw !important;
+    transform: translateY(-50%) !important;
+  }
+  .mc-arrow-right {
+    left: auto !important;
+    right: 2vw !important;
+    transform: translateY(-50%) !important;
+  }
+  /* points : remontés pour ne pas être cachés par le bouton "Laisser un avis" */
+  .mc-dots { bottom: 10% !important; }
+  /* extras (extra shot…) : contraint pour ne pas déborder à droite */
+  .mc-extras {
+    left: 5vw !important;
+    right: 5vw !important;
+    width: auto !important;
+    transform: none !important;
+    bottom: 15% !important;
+    font-size: 0.72rem !important;
+  }
 }
