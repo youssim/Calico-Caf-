@@ -223,7 +223,7 @@ export default function HeroSection() {
 
         {/* Nous trouver */}
         <motion.button
-          onClick={() => window.open("https://www.google.com/maps/dir/?api=1&destination=50.6386484,3.0653636", "_blank")}
+          onClick={() => window.open("https://www.google.com/maps/dir/?api=1&destination=50.6386484,3.0653636", "_blank", "noopener,noreferrer")}
           whileHover={{ scale: 1.03 }}
           onMouseEnter={(e) => {
             e.currentTarget.style.background = NAV_COLOR;
