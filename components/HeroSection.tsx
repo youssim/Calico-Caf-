@@ -372,7 +372,7 @@ export default function HeroSection() {
       )}
 
       {/* HERO IMAGE — taille naturelle, collée en haut */}
-      <div style={{
+      <div className="hero-fresque" style={{
         position: "absolute",
         top: -57,
         left: 0,

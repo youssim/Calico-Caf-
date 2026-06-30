@@ -372,7 +372,7 @@ export default function AboutSection() {
         >
           {/* Photo réelle (z-index 2) — sur un côté, le gobelet descend au centre */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img ref={(el) => { cardRefs.current[i] = el; }} src={panel.photo.src} alt=""
+          <img ref={(el) => { cardRefs.current[i] = el; }} className="about-photo" src={panel.photo.src} alt=""
             style={{
               position: "absolute",
               top: "50%",
@@ -389,7 +389,7 @@ export default function AboutSection() {
 
           {/* Affiche du café "punaisée" (z-index 1, déco — vrais posters du lieu) */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={panel.poster.src} alt=""
+          <img className="about-poster" src={panel.poster.src} alt=""
             style={{
               position: "absolute",
               [panel.poster.side]: "clamp(24px, 4vw, 70px)",
@@ -401,7 +401,7 @@ export default function AboutSection() {
             } as React.CSSProperties} />
 
           {/* Texte histoire (z-index 2) */}
-          <div ref={(el) => { textRefs.current[i] = el; }}
+          <div ref={(el) => { textRefs.current[i] = el; }} className="about-text"
             style={{
               position: "absolute",
               [panel.text.side]: "clamp(24px, 5vw, 90px)",

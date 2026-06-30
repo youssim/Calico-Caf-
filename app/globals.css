@@ -65,8 +65,52 @@ nav, .nav-cta { transition: opacity 0.4s ease; }
        À L'INTÉRIEUR du wrap, jamais le wrap lui-même → on peut le scaler sans
        casser l'animation. Le scale est centré (origin viewport) donc le gobelet
        reste centré à l'atterrissage. — */
-  .cup-wrap { transform: scale(0.5) translateZ(0) !important; }
+  .cup-wrap { transform: scale(0.42) translateZ(0) !important; }
+
+  /* — Fresque hero : agrandie pour remplir le haut (au lieu d'une fine bande) — */
+  .hero-fresque {
+    left: 50% !important;
+    right: auto !important;
+    width: 180% !important;
+    transform: translateX(-50%) !important;
+  }
 
   /* — Avis : le titre passe en flux normal (plus de sticky qui se colle) — */
   .reviews-title { position: static !important; }
+
+  /* ═══ Section À PROPOS — réagencement vertical (≠ desktop) ═══
+     Le gobelet (z 11) flotte au centre ; on garde le texte EN HAUT et la
+     photo + le poster EN BAS, hors de la trajectoire centrale du gobelet,
+     pour que tout reste lisible. */
+  .about-text {
+    top: 6vh !important;
+    bottom: auto !important;
+    left: 6vw !important;
+    right: 6vw !important;
+    max-width: none !important;
+    font-size: 1.02rem !important;
+    line-height: 1.6 !important;
+    /* au-dessus du gobelet (z 11) : le texte reste lisible même quand le
+       gobelet passe au centre pendant le scroll. */
+    z-index: 20 !important;
+  }
+  /* photo : plus grande, en bas à droite */
+  .about-photo {
+    top: auto !important;
+    bottom: 6vh !important;
+    left: auto !important;
+    right: 6vw !important;
+    width: 46vw !important;
+    transform: none !important;
+  }
+  /* poster : en bas à gauche, bien visible (plus caché derrière le texte) */
+  .about-poster {
+    top: auto !important;
+    bottom: 8vh !important;
+    left: 6vw !important;
+    right: auto !important;
+    width: 40vw !important;
+    transform: rotate(-4deg) !important;
+    z-index: 1 !important;
+  }
 }
