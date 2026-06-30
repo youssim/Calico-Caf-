@@ -180,8 +180,7 @@ export default function ReviewsSection() {
                 }}
               >
                 <Stars n={r.stars} size={15} />
-                <span style={{ opacity: 0.6 }}>{r.when}</span>
-                <span style={{ fontWeight: 700, opacity: 0.85 }}>· {r.name}</span>
+                <span style={{ fontWeight: 700, opacity: 0.85 }}>{r.name}</span>
               </div>
 
               {/* titre de l'avis */}
