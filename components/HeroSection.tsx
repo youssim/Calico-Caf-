@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { lenisRef } from "@/lib/lenis";
 
@@ -80,6 +81,11 @@ export default function HeroSection() {
   // La gestion du scroll au chargement (hero au refresh / restauration de la position
   // au retour des mentions légales) est centralisée dans SplashScreen, qui monte
   // toujours en premier — on évite ainsi que deux effets se battent pour le scroll.
+
+  // Menu mobile (burger) : sur petit écran les liens + CTA de la navbar sont masqués
+  // (CSS @media) et remplacés par ce menu plein écran. Desktop = inchangé.
+  const [menuOpen, setMenuOpen] = useState(false);
+  const goTo = (href: string) => { setMenuOpen(false); scrollTo(href); };
 
   return (
     <section style={{
@@ -255,6 +261,115 @@ export default function HeroSection() {
           Nous trouver
         </motion.button>
       </motion.div>
+
+      {/* BURGER (mobile uniquement, affiché par CSS @media) */}
+      <button
+        className="nav-burger"
+        aria-label="Menu"
+        onClick={() => setMenuOpen((v) => !v)}
+        style={{
+          display: "none", // activé en mobile via globals.css
+          position: "fixed",
+          top: 18,
+          right: "1.1rem",
+          zIndex: 120,
+          width: 46,
+          height: 46,
+          borderRadius: "50%",
+          background: "rgba(242,237,227,0.9)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          border: `2px solid ${NAV_COLOR}`,
+          cursor: "pointer",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={NAV_COLOR} strokeWidth="2" strokeLinecap="round">
+          {menuOpen ? (
+            <>
+              <line x1="5" y1="5" x2="19" y2="19" />
+              <line x1="19" y1="5" x2="5" y2="19" />
+            </>
+          ) : (
+            <>
+              <line x1="3" y1="7" x2="21" y2="7" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="17" x2="21" y2="17" />
+            </>
+          )}
+        </svg>
+      </button>
+
+      {/* MENU PLEIN ÉCRAN (mobile) */}
+      {menuOpen && (
+        <div
+          className="mobile-menu"
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 110,
+            background: "rgba(242,237,227,0.97)",
+            backdropFilter: "blur(8px)",
+            WebkitBackdropFilter: "blur(8px)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 28,
+          }}
+        >
+          {navLinks.map((link) => (
+            <button
+              key={link.href}
+              onClick={() => goTo(link.href)}
+              style={{
+                background: "transparent",
+                border: "none",
+                cursor: "pointer",
+                fontFamily: "var(--font-saira)",
+                fontWeight: 900,
+                fontSize: 38,
+                textTransform: "uppercase",
+                letterSpacing: "0.02em",
+                color: NAV_COLOR,
+              }}
+            >
+              {link.label}
+            </button>
+          ))}
+          <div style={{ display: "flex", gap: 16, marginTop: 18 }}>
+            <a
+              href="https://instagram.com/calicolille"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram de Calico"
+              style={{
+                display: "flex", alignItems: "center", justifyContent: "center",
+                width: 50, height: 50, borderRadius: "50%",
+                border: `2px solid ${NAV_COLOR}`, color: NAV_COLOR,
+              }}
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+              </svg>
+            </a>
+            <button
+              onClick={() => { setMenuOpen(false); window.open("https://www.google.com/maps/dir/?api=1&destination=50.6386484,3.0653636", "_blank", "noopener,noreferrer"); }}
+              style={{
+                background: NAV_COLOR, color: "#f2ede3",
+                fontFamily: "var(--font-courier)", fontSize: 14, fontWeight: 700,
+                padding: "0 26px", height: 50, borderRadius: 50, border: "none",
+                cursor: "pointer", letterSpacing: "0.05em", textTransform: "uppercase",
+              }}
+            >
+              Nous trouver
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* HERO IMAGE — taille naturelle, collée en haut */}
       <div style={{

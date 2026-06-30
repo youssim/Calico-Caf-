@@ -46,3 +46,24 @@ main, section { margin: 0; padding: 0; }
    ajouté par ScrollTrigger ; !important bat l'opacité inline de framer-motion). */
 nav, .nav-cta { transition: opacity 0.4s ease; }
 .nav-hidden { opacity: 0 !important; pointer-events: none !important; }
+
+/* ════════════════════════════════════════════════════════════════════
+   RESPONSIVE MOBILE (≤ 768px) — n'affecte JAMAIS le desktop.
+   Les styles desktop (inline) restent la référence ; on ne fait que
+   surcharger pour petit écran via !important.
+   ════════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* — Navbar : liens + CTA desktop masqués, burger affiché — */
+  .nav-links { display: none !important; }
+  .nav-cta { display: none !important; }
+  .nav-burger { display: flex !important; }
+  /* pill réduite + logo plus petit */
+  nav { padding: 2px 18px !important; gap: 0 !important; }
+  nav img { height: 50px !important; }
+
+  /* — Gobelet (Spin-Land) : réduit via le conteneur. GSAP transforme les images
+       À L'INTÉRIEUR du wrap, jamais le wrap lui-même → on peut le scaler sans
+       casser l'animation. Le scale est centré (origin viewport) donc le gobelet
+       reste centré à l'atterrissage. — */
+  .cup-wrap { transform: scale(0.5) translateZ(0) !important; }
+}

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fiche de remise — Site Calico</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 11pt;
+      line-height: 1.6;
+      color: #111;
+      background: #fff;
+    }
+    .page { width: 210mm; min-height: 297mm; margin: 0 auto; padding: 22mm 20mm 20mm; }
+
+    .header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      border-bottom: 2px solid #111; padding-bottom: 14px; margin-bottom: 22px;
+    }
+    .header-left { font-family: Arial, sans-serif; }
+    .header-left .name { font-size: 15pt; font-weight: 700; letter-spacing: 0.02em; }
+    .header-left .sub { font-size: 9pt; color: #555; margin-top: 2px; }
+    .header-right { text-align: right; font-family: Arial, sans-serif; font-size: 9pt; color: #555; }
+    .header-right .doc-title {
+      font-size: 13pt; font-weight: 700; color: #111; letter-spacing: 0.04em;
+      text-transform: uppercase; margin-bottom: 4px;
+    }
+
+    h2 {
+      font-family: Arial, sans-serif; font-size: 10pt; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase; border-bottom: 1px solid #ccc;
+      padding-bottom: 4px; margin: 22px 0 10px; color: #333;
+    }
+    p { margin-bottom: 8px; }
+
+    .intro {
+      background: #f7f7f7; border: 1px solid #ddd; border-radius: 4px;
+      padding: 14px 18px; margin-bottom: 6px; font-size: 10.5pt;
+    }
+
+    table { width: 100%; border-collapse: collapse; margin: 6px 0 10px; }
+    th, td {
+      text-align: left; padding: 9px 10px; border-bottom: 1px solid #e2e2e2;
+      vertical-align: top; font-size: 10pt;
+    }
+    th {
+      font-family: Arial, sans-serif; font-size: 8.5pt; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; color: #666;
+      border-bottom: 1.5px solid #aaa;
+    }
+    td.what { font-weight: 700; width: 32%; font-family: Arial, sans-serif; font-size: 9.5pt; }
+    .fill { display: inline-block; border-bottom: 1px dotted #888; min-width: 150px; height: 1.3em; }
+
+    .check-list { list-style: none; margin: 4px 0 8px; }
+    .check-list li {
+      padding: 6px 0 6px 28px; position: relative; font-size: 10.5pt;
+      border-bottom: 1px dashed #e5e5e5;
+    }
+    .check-list li::before {
+      content: ""; position: absolute; left: 0; top: 7px;
+      width: 14px; height: 14px; border: 1.5px solid #888; border-radius: 3px;
+    }
+    .check-list .sub { color: #777; font-size: 9pt; }
+
+    .note {
+      font-family: Arial, sans-serif; font-size: 8.5pt; color: #777;
+      margin-top: 4px;
+    }
+
+    .sig-row { display: flex; gap: 30px; margin-top: 26px; }
+    .sig-block { flex: 1; }
+    .sig-title {
+      font-family: Arial, sans-serif; font-size: 8.5pt; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; color: #555; margin-bottom: 6px;
+    }
+    .sig-line { border-bottom: 1px solid #aaa; height: 48px; }
+    .sig-date { font-size: 8pt; color: #999; margin-top: 4px; }
+
+    .footer {
+      margin-top: 30px; border-top: 1px solid #ddd; padding-top: 10px;
+      font-size: 7.5pt; color: #999; font-family: Arial, sans-serif; text-align: center;
+    }
+    @media print { .page { margin: 0; padding: 18mm; width: 100%; } }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-left">
+      <div class="name">Salim Youssef</div>
+      <div class="sub">Développeur web indépendant — Auto-entrepreneur</div>
+      <div class="sub">SIRET : 94281891500012</div>
+      <div class="sub">salimyoussefpro@outlook.fr</div>
+    </div>
+    <div class="header-right">
+      <div class="doc-title">Fiche de remise<br>du site web</div>
+      <div>Site : Calico Café</div>
+      <div style="margin-top:4px;">Date : _____ / _____ / 2026</div>
+    </div>
+  </div>
+
+  <div class="intro">
+    Ce document atteste que le site web de <strong>Calico Café</strong> a été livré au Client, et liste
+    l'ensemble des éléments et accès transmis. À compter de cette remise, le Client est
+    <strong>seul propriétaire et gestionnaire</strong> du site (cf. Articles 3 et 4 du contrat).
+  </div>
+
+  <!-- CE QUI EST REMIS -->
+  <h2>1 — Éléments remis au Client</h2>
+  <table>
+    <tr><th>Élément</th><th>Détail / Accès</th></tr>
+    <tr>
+      <td class="what">Adresse du site (URL)</td>
+      <td><span class="fill"></span><div class="note">URL Vercel, ou nom de domaine personnalisé si souscrit</div></td>
+    </tr>
+    <tr>
+      <td class="what">Hébergement — Vercel</td>
+      <td>Compte : <span class="fill"></span><br>Mot de passe transmis séparément (sécurité)<div class="note">Hébergement gratuit. Le site se met à jour tout seul à chaque modification du code.</div></td>
+    </tr>
+    <tr>
+      <td class="what">Code source — GitHub</td>
+      <td>Dépôt : <span class="fill"></span><br>Accès transféré au compte du Client<div class="note">Le code complet du site. Peut aussi être remis en archive ZIP.</div></td>
+    </tr>
+    <tr>
+      <td class="what">Formulaire de contact</td>
+      <td>Service Web3Forms — envoi vers : <span class="fill"></span><div class="note">Gratuit, sans installation. Les messages arrivent direct dans la boîte mail du café.</div></td>
+    </tr>
+    <tr>
+      <td class="what">Instagram lié</td>
+      <td>@calicolille<div class="note">Lien dans la navigation du site</div></td>
+    </tr>
+  </table>
+
+  <!-- INFOS À RÉCUPÉRER -->
+  <h2>2 — Infos à récupérer auprès du café (à cocher)</h2>
+  <ul class="check-list">
+    <li><strong>E-mail du café</strong> <span class="sub">— pour brancher le formulaire de contact (Web3Forms)</span></li>
+    <li><strong>Numéro SIRET</strong> <span class="sub">— obligatoire dans les mentions légales</span></li>
+    <li><strong>Raison sociale exacte + adresse de facturation</strong> <span class="sub">— pour le contrat et la facture</span></li>
+    <li><strong>Nom du gérant / représentant légal</strong> <span class="sub">— signataire du contrat</span></li>
+    <li><strong>Validation du texte « À propos »</strong> <span class="sub">— corrections éventuelles sur l'histoire / le ton</span></li>
+    <li><strong>Horaires définitifs + jour de fermeture</strong> <span class="sub">— vérifier ce qui est affiché sur le site</span></li>
+    <li><strong>Souhaitent-ils un nom de domaine ?</strong> <span class="sub">(ex. calico-lille.fr) — option, ~12 €/an à leur charge</span></li>
+  </ul>
+
+  <!-- RAPPEL -->
+  <h2>3 — Bon à savoir pour le Client</h2>
+  <p style="font-size:10.5pt;">
+    • Le site et son hébergement sont <strong>gratuits à l'usage</strong> : aucun abonnement, rien à payer chaque mois.<br>
+    • Toute <strong>modification ultérieure</strong> (nouveau texte, nouvelle page, refonte…) fera l'objet d'un <strong>devis séparé</strong> (cf. Article 5 du contrat). Le Client est libre de la confier à qui il souhaite.<br>
+    • Une <strong>garantie de 15 jours</strong> couvre les éventuels bugs imputables au Prestataire après la livraison.
+  </p>
+
+  <!-- SIGNATURES -->
+  <h2>Remise effectuée</h2>
+  <div class="sig-row">
+    <div class="sig-block">
+      <div class="sig-title">Le Prestataire — Salim Youssef</div>
+      <div class="sig-line"></div>
+      <div class="sig-date">Date &amp; signature</div>
+    </div>
+    <div class="sig-block">
+      <div class="sig-title">Le Client (bon pour réception)</div>
+      <div class="sig-line"></div>
+      <div class="sig-date">Date &amp; signature</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Document à conserver par les deux parties &nbsp;·&nbsp; Calico Café / Salim Youssef &nbsp;·&nbsp; 2026
+  </div>
+
+</div>
+</body>
+</html>

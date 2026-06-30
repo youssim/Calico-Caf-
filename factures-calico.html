@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Factures — Site Calico</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Georgia, "Times New Roman", serif; font-size: 11pt; line-height: 1.6; color: #111; background: #fff; }
+    .page { width: 210mm; min-height: 297mm; margin: 0 auto; padding: 22mm 20mm 20mm; page-break-after: always; }
+    .page:last-child { page-break-after: auto; }
+
+    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #111; padding-bottom: 14px; margin-bottom: 22px; }
+    .header-left { font-family: Arial, sans-serif; }
+    .header-left .name { font-size: 15pt; font-weight: 700; letter-spacing: 0.02em; }
+    .header-left .sub { font-size: 9pt; color: #555; margin-top: 2px; }
+    .header-right { text-align: right; font-family: Arial, sans-serif; }
+    .header-right .doc-title { font-size: 14pt; font-weight: 700; color: #111; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 6px; }
+    .header-right .meta { font-size: 9pt; color: #555; line-height: 1.7; }
+    .fill-sm { display: inline-block; border-bottom: 1px dotted #888; min-width: 70px; }
+
+    .badge { display: inline-block; font-family: Arial, sans-serif; font-size: 8.5pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #fff; background: #1a1a1a; padding: 3px 10px; border-radius: 3px; margin-bottom: 14px; }
+
+    .client-box { border: 1px solid #ddd; border-radius: 4px; padding: 12px 14px; margin: 4px 0 20px; max-width: 60%; margin-left: auto; }
+    .client-title { font-family: Arial, sans-serif; font-size: 8pt; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #888; margin-bottom: 8px; }
+    .client-box .field-label { font-size: 8pt; color: #999; margin-bottom: 2px; }
+    .field-line { border-bottom: 1px solid #aaa; min-height: 17px; margin-bottom: 8px; }
+
+    table { width: 100%; border-collapse: collapse; margin: 6px 0 4px; }
+    th, td { padding: 10px; font-size: 10.5pt; }
+    th { font-family: Arial, sans-serif; font-size: 8.5pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #fff; background: #1a1a1a; text-align: left; }
+    th.num, td.num { text-align: right; }
+    td { border-bottom: 1px solid #e2e2e2; vertical-align: top; }
+
+    .totals { width: 50%; margin-left: auto; margin-top: 10px; }
+    .totals-row { display: flex; justify-content: space-between; padding: 6px 10px; font-size: 11pt; }
+    .totals-row.grand { background: #f2ede3; font-weight: 700; font-size: 13pt; font-family: Arial, sans-serif; border-radius: 4px; margin-top: 4px; }
+    .fill { display: inline-block; border-bottom: 1px dotted #555; min-width: 90px; text-align: right; }
+
+    .pay { margin-top: 26px; border: 1px solid #ddd; border-radius: 4px; padding: 12px 16px; font-size: 10pt; }
+    .pay-title { font-family: Arial, sans-serif; font-size: 8.5pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #666; margin-bottom: 6px; }
+
+    .legal { margin-top: 18px; font-family: Arial, sans-serif; font-size: 8pt; color: #888; line-height: 1.6; }
+    .footer { margin-top: 24px; border-top: 1px solid #ddd; padding-top: 10px; font-size: 7.5pt; color: #999; font-family: Arial, sans-serif; text-align: center; }
+
+    @media print { .page { margin: 0; padding: 18mm; width: 100%; } }
+  </style>
+</head>
+<body>
+
+<!-- ════════ FACTURE 1 — ACOMPTE 50 % (à la signature) ════════ -->
+<div class="page">
+  <div class="header">
+    <div class="header-left">
+      <div class="name">Salim Youssef</div>
+      <div class="sub">Développeur web indépendant — Auto-entrepreneur</div>
+      <div class="sub">SIRET : 94281891500012</div>
+      <div class="sub">salimyoussefpro@outlook.fr</div>
+    </div>
+    <div class="header-right">
+      <div class="doc-title">Facture</div>
+      <div class="meta">
+        N° <span class="fill-sm">2026-020</span><br>
+        Date : <span class="fill-sm">__/__/2026</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="badge">Acompte — 1er versement (50 %)</div>
+
+  <div class="client-box">
+    <div class="client-title">Facturé à</div>
+    <div class="field-label">Nom / Raison sociale</div>
+    <div class="field-line"></div>
+    <div class="field-label">Adresse</div>
+    <div class="field-line"></div>
+    <div class="field-label">SIRET</div>
+    <div class="field-line"></div>
+  </div>
+
+  <table>
+    <tr><th>Désignation</th><th class="num">Montant</th></tr>
+    <tr>
+      <td>
+        <strong>Création du site web — Calico Café</strong><br>
+        <span style="font-size:9pt; color:#666;">Acompte de 50 % à la commande (signature du contrat).<br>
+        Site vitrine : design, développement, version mobile, mise en ligne.</span>
+      </td>
+      <td class="num"><span class="fill"></span> €</td>
+    </tr>
+  </table>
+
+  <div class="totals">
+    <div class="totals-row"><span>Sous-total</span><span><span class="fill"></span> €</span></div>
+    <div class="totals-row"><span>TVA</span><span>Non applicable</span></div>
+    <div class="totals-row grand"><span>NET À PAYER</span><span><span class="fill"></span> €</span></div>
+  </div>
+
+  <div class="pay">
+    <div class="pay-title">Règlement</div>
+    Par virement, chèque ou espèces, à réception.<br>
+    IBAN : <span class="fill-sm" style="min-width:280px;"></span>
+  </div>
+
+  <div class="legal">
+    TVA non applicable, art. 293 B du CGI (auto-entrepreneur).<br>
+    En cas de retard de paiement : pénalités au taux légal + indemnité forfaitaire pour frais de recouvrement de 40 € (art. L441-10 du Code de commerce).<br>
+    Le solde (50 %) sera facturé à la livraison du site.
+  </div>
+
+  <div class="footer">Calico Café / Salim Youssef · 2026</div>
+</div>
+
+<!-- ════════ FACTURE 2 — SOLDE 50 % (à la livraison) ════════ -->
+<div class="page">
+  <div class="header">
+    <div class="header-left">
+      <div class="name">Salim Youssef</div>
+      <div class="sub">Développeur web indépendant — Auto-entrepreneur</div>
+      <div class="sub">SIRET : 94281891500012</div>
+      <div class="sub">salimyoussefpro@outlook.fr</div>
+    </div>
+    <div class="header-right">
+      <div class="doc-title">Facture</div>
+      <div class="meta">
+        N° <span class="fill-sm">2026-021</span><br>
+        Date : <span class="fill-sm">__/__/2026</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="badge">Solde — 2e versement (50 %)</div>
+
+  <div class="client-box">
+    <div class="client-title">Facturé à</div>
+    <div class="field-label">Nom / Raison sociale</div>
+    <div class="field-line"></div>
+    <div class="field-label">Adresse</div>
+    <div class="field-line"></div>
+    <div class="field-label">SIRET</div>
+    <div class="field-line"></div>
+  </div>
+
+  <table>
+    <tr><th>Désignation</th><th class="num">Montant</th></tr>
+    <tr>
+      <td>
+        <strong>Création du site web — Calico Café</strong><br>
+        <span style="font-size:9pt; color:#666;">Solde de 50 % à la livraison du site finalisé et mis en ligne.<br>
+        Remise du code source et des accès (hébergement Vercel, GitHub).</span>
+      </td>
+      <td class="num"><span class="fill"></span> €</td>
+    </tr>
+  </table>
+
+  <div class="totals">
+    <div class="totals-row"><span>Sous-total</span><span><span class="fill"></span> €</span></div>
+    <div class="totals-row"><span>TVA</span><span>Non applicable</span></div>
+    <div class="totals-row grand"><span>NET À PAYER</span><span><span class="fill"></span> €</span></div>
+  </div>
+
+  <div class="pay">
+    <div class="pay-title">Règlement</div>
+    Par virement, chèque ou espèces, à réception.<br>
+    IBAN : <span class="fill-sm" style="min-width:280px;"></span>
+  </div>
+
+  <div class="legal">
+    TVA non applicable, art. 293 B du CGI (auto-entrepreneur).<br>
+    En cas de retard de paiement : pénalités au taux légal + indemnité forfaitaire pour frais de recouvrement de 40 € (art. L441-10 du Code de commerce).<br>
+    Solde final — clôture de la prestation. La cession des droits prend effet au règlement de cette facture.
+  </div>
+
+  <div class="footer">Calico Café / Salim Youssef · 2026</div>
+</div>
+
+</body>
+</html>
