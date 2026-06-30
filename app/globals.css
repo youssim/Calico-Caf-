@@ -66,4 +66,7 @@ nav, .nav-cta { transition: opacity 0.4s ease; }
        casser l'animation. Le scale est centré (origin viewport) donc le gobelet
        reste centré à l'atterrissage. — */
   .cup-wrap { transform: scale(0.5) translateZ(0) !important; }
+
+  /* — Avis : le titre passe en flux normal (plus de sticky qui se colle) — */
+  .reviews-title { position: static !important; }
 }

@@ -82,7 +82,7 @@ export default function ReviewsSection() {
         }}
       >
         {/* ── Gauche : grand titre (sticky sur desktop) ── */}
-        <div style={{ flex: "1 1 320px", minWidth: 280, position: "sticky", top: "12vh" }}>
+        <div className="reviews-title" style={{ flex: "1 1 320px", minWidth: 280, position: "sticky", top: "12vh" }}>
           <span
             style={{
               fontFamily: "var(--font-courier)",
