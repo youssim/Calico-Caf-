@@ -33,11 +33,19 @@ html.cup-hide .cup-wrap {
   opacity: 0 !important;
 }
 
+/* Anti-débordement horizontal universel (tous téléphones/tablettes) : empêche
+   qu'un élément plus large que l'écran (bandeau défilant, ruban incliné…) ne
+   force iOS Safari à dézoomer et à afficher une bande blanche sur le côté.
+   `clip` (et non `hidden`) : ne crée pas de conteneur de scroll → ne casse ni
+   le position:fixed du gobelet ni le pin ScrollTrigger. */
+html { overflow-x: clip; }
+
 body {
   background-color: #f2ede3 !important;
   background: #f2ede3 !important;
   color: var(--black);
   -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
 }
 
 main, section { margin: 0; padding: 0; }
