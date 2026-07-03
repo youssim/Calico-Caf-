@@ -51,16 +51,28 @@ export default function FooterSection() {
           Tous droits réservés
         </div>
 
-        <a
-          href="/mentions-legales"
-          style={linkUnderline}
-          onClick={() => {
-            // mémorise la position pour y revenir au retour (sans dépendre du bfcache)
-            try { sessionStorage.setItem("calico-return-y", String(Math.round(window.scrollY))); } catch {}
-          }}
-        >
-          Mentions légales
-        </a>
+        <div style={col}>
+          <a
+            href="/mentions-legales"
+            style={linkUnderline}
+            onClick={() => {
+              // mémorise la position pour y revenir au retour (sans dépendre du bfcache)
+              try { sessionStorage.setItem("calico-return-y", String(Math.round(window.scrollY))); } catch {}
+            }}
+          >
+            Mentions légales
+          </a>
+          <br />
+          <a
+            href="/mentions-legales#confidentialite"
+            style={{ ...linkUnderline, display: "inline-block", marginTop: 4 }}
+            onClick={() => {
+              try { sessionStorage.setItem("calico-return-y", String(Math.round(window.scrollY))); } catch {}
+            }}
+          >
+            Politique de confidentialité
+          </a>
+        </div>
 
         <div style={col}>
           Suivez-nous

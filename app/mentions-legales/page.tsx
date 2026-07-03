@@ -160,7 +160,11 @@ export default function MentionsLegales() {
         </h1>
 
         {SECTIONS.map((s) => (
-          <section key={s.n} style={{ marginBottom: "clamp(40px, 6vh, 64px)" }}>
+          <section
+            key={s.n}
+            id={s.n === "6" ? "confidentialite" : undefined}
+            style={{ marginBottom: "clamp(40px, 6vh, 64px)", scrollMarginTop: "24px" }}
+          >
             <h2
               style={{
                 fontFamily: "var(--font-saira)", fontWeight: 900, textTransform: "uppercase",
