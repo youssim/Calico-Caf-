@@ -49,6 +49,8 @@ export default function FooterSection() {
           Calico ©{new Date().getFullYear()}
           <br />
           Tous droits réservés
+          <br />
+          Site réalisé par <strong>Salim Youssef</strong>
         </div>
 
         <div style={col}>
